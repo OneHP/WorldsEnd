@@ -8,6 +8,6 @@ public interface Ship extends Destructable, Updatable, Drawable {
 
 	Planet getTarget();
 
-	int cost();
+	int getCost();
 
 }

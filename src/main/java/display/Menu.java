@@ -17,9 +17,11 @@ public class Menu {
 	private boolean launchAttack;
 	private Planet target;
 	private Class<? extends Ship> shipType;
+	private int repeatCount;
 
 	public Menu() {
 
+		this.repeatCount = 1;
 		List<MenuItem> empty = Lists.newArrayList();
 
 		List<Planet> planets = StaticAccess.getPlanets();
@@ -105,5 +107,17 @@ public class Menu {
 
 	public Class<? extends Ship> getShipType() {
 		return this.shipType;
+	}
+
+	public void increaseRepeatCount() {
+		this.repeatCount = Math.min(10, this.repeatCount + 1);
+	}
+
+	public void decreaseRepeatCount() {
+		this.repeatCount = Math.max(1, this.repeatCount - 1);
+	}
+
+	public int getRepeatCount() {
+		return this.repeatCount;
 	}
 }

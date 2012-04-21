@@ -177,8 +177,11 @@ public class Main extends SimpleApplication {
 		this.inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_UP));
 		this.inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_DOWN));
 		this.inputManager.addMapping("Back", new KeyTrigger(KeyInput.KEY_BACK));
+		this.inputManager.addMapping("Right",
+				new KeyTrigger(KeyInput.KEY_RIGHT));
+		this.inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_LEFT));
 		this.inputManager.addListener(this.actionListener, new String[] {
-				"Action", "Up", "Down", "Back" });
+				"Action", "Up", "Down", "Back", "Right", "Left" });
 	}
 
 	private final ActionListener actionListener = new ActionListener() {
@@ -189,7 +192,8 @@ public class Main extends SimpleApplication {
 					removeMenu();
 					if (Main.this.menu.getRoot().action()) {
 						if (Main.this.menu.getLaunchAttack()) {
-							launchAttack(Main.this.menu.getShipType());
+							launchAttack(Main.this.menu.getShipType(),
+									Main.this.menu.getRepeatCount());
 						}
 						Main.this.menuDisplayed = false;
 					} else {
@@ -224,21 +228,38 @@ public class Main extends SimpleApplication {
 					drawMenu();
 				}
 			}
+			if (name.equals("Right") && !keyPressed) {
+				if (Main.this.menuDisplayed
+						&& -1 == Main.this.menu.getRoot().getSelectedIndex()) {
+					Main.this.menu.increaseRepeatCount();
+					removeMenu();
+					drawMenu();
+				}
+			}
+			if (name.equals("Left") && !keyPressed) {
+				if (Main.this.menuDisplayed
+						&& -1 == Main.this.menu.getRoot().getSelectedIndex()) {
+					Main.this.menu.decreaseRepeatCount();
+					removeMenu();
+					drawMenu();
+				}
+			}
 		}
 
-		private void launchAttack(Class<? extends Ship> clazz) {
-			Ship ship = null;
-			if (clazz == SmallShip.class) {
-				ship = new SmallShip(Main.this.homePlanet,
-						Main.this.menu.getTarget(),
-						Main.this.homePlanet.getLocation());
-			} else if (clazz == BomberShip.class) {
-				ship = new BomberShip(Main.this.homePlanet,
-						Main.this.menu.getTarget(),
-						Main.this.homePlanet.getLocation());
+		private void launchAttack(Class<? extends Ship> clazz, int times) {
+			for (int i = 0; i < times; i++) {
+				Ship ship = null;
+				if (clazz == SmallShip.class) {
+					ship = new SmallShip(Main.this.homePlanet,
+							Main.this.menu.getTarget(),
+							Main.this.homePlanet.getLocation());
+				} else if (clazz == BomberShip.class) {
+					ship = new BomberShip(Main.this.homePlanet,
+							Main.this.menu.getTarget(),
+							Main.this.homePlanet.getLocation());
+				}
+				Main.this.launchQueue.add(ship);
 			}
-
-			Main.this.launchQueue.add(ship);
 		}
 	};
 
@@ -252,7 +273,8 @@ public class Main extends SimpleApplication {
 		this.menuText = Lists.newArrayList();
 		MenuItem root = this.menu.getRoot();
 		List<MenuItem> subMenu = root.getSubMenu();
-		this.menuText.add(menuText(root, false, 0, 0, subMenu.size() < 1));
+		this.menuText.add(menuText(root, false, 0, 0,
+				-1 == root.getSelectedIndex()));
 		for (int i = 0; i < subMenu.size(); i++) {
 			MenuItem menuItem = subMenu.get(i);
 			this.menuText.add(menuText(menuItem,
@@ -274,7 +296,8 @@ public class Main extends SimpleApplication {
 		BitmapFont font = this.assetManager
 				.loadFont("Interface/Fonts/Default.fnt");
 		BitmapText text = new BitmapText(font, false);
-		text.setText(menuItem.getItem() + (leaf ? " - Confirm?" : ""));
+		text.setText(menuItem.getItem()
+				+ (leaf ? " x " + this.menu.getRepeatCount() : ""));
 		text.setSize(Constants.GUI_FONT_SIZE);
 		text.setColor(new ColorRGBA(selected || leaf ? 0.0f : 1.0f, 1.0f,
 				selected || leaf ? 0.0f : 1.0f, 0.5f));
@@ -303,7 +326,7 @@ public class Main extends SimpleApplication {
 			this.actionLimiter = 0.0f;
 			if (this.launchQueue.size() > 0) {
 				Ship ship = this.launchQueue.remove(0);
-				if (ship.cost() <= this.homePlanet.getGold()) {
+				if (ship.getCost() <= this.homePlanet.getGold()) {
 					this.ships.add(ship);
 					Main.this.rootNode.attachChild(ship.getView());
 					Main.this.homePlanet.confirmAttack();

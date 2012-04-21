@@ -46,7 +46,7 @@ public class SmallShip extends AbstractShip {
 	}
 
 	@Override
-	public int cost() {
+	public int getCost() {
 		return Constants.SMALL_SHIP_COST;
 	}
 }
