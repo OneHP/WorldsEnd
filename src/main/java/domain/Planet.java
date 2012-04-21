@@ -1,9 +1,11 @@
 package domain;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import util.Constants;
-import util.ManagerAccess;
+import util.StaticAccess;
 
 import com.google.common.collect.Maps;
 import com.jme3.material.Material;
@@ -14,7 +16,9 @@ import com.jme3.scene.Geometry;
 
 import drawing.Circle;
 
-public class Planet implements Drawable, Destructable {
+public class Planet implements Drawable, Destructable, Updatable {
+
+	private float actionLimiter = 0.0f;
 
 	private final int maxHealth;
 	private int currentHealth;
@@ -24,6 +28,9 @@ public class Planet implements Drawable, Destructable {
 	private int gold = 10;
 	private int score = 0;
 	private final Map<Planet, Integer> revengeMeter;
+	private final Random random = new Random();
+	private boolean sendAttack = false;
+	private Planet attackTarget = null;
 
 	public Planet(Vector3f location, float size) {
 		this.maxHealth = 100;
@@ -53,7 +60,7 @@ public class Planet implements Drawable, Destructable {
 	}
 
 	private Material getMaterial() {
-		Material material = new Material(ManagerAccess.getAssetManager(),
+		Material material = new Material(StaticAccess.getAssetManager(),
 				"Common/MatDefs/Misc/Unshaded.j3md");
 		material.setColor("Color", new ColorRGBA(0, 255, 255, 1));
 		return material;
@@ -104,6 +111,33 @@ public class Planet implements Drawable, Destructable {
 
 	public void goldTick() {
 		this.gold++;
+	}
+
+	@Override
+	public void update(float tpf) {
+		this.actionLimiter += tpf;
+		if (this.actionLimiter > Constants.ACTION_RATE) {
+			this.actionLimiter = 0.0f;
+			List<Planet> planets = StaticAccess.getPlanets();
+			planets.remove(this);
+			int planetIndex = this.random.nextInt(planets.size());
+			this.sendAttack = true;
+			this.attackTarget = planets.get(planetIndex);
+		}
+
+	}
+
+	public boolean getSendAttack() {
+		return this.sendAttack;
+	}
+
+	public Planet getAttackTarget() {
+		return this.attackTarget;
+	}
+
+	public void confirmAttack() {
+		this.attackTarget = null;
+		this.sendAttack = false;
 	}
 
 }

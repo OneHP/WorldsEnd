@@ -2,7 +2,7 @@ package domain;
 
 import meshes.SmallShipMesh;
 import util.Constants;
-import util.ManagerAccess;
+import util.StaticAccess;
 
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -41,7 +41,7 @@ public class SmallShip implements Drawable, Destructable, Updatable {
 	}
 
 	private Material getMaterial() {
-		Material material = new Material(ManagerAccess.getAssetManager(),
+		Material material = new Material(StaticAccess.getAssetManager(),
 				"Common/MatDefs/Misc/Unshaded.j3md");
 		material.setColor("Color", ColorRGBA.White);
 		return material;

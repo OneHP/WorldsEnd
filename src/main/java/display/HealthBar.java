@@ -2,7 +2,7 @@ package display;
 
 import java.util.List;
 
-import util.ManagerAccess;
+import util.StaticAccess;
 
 import com.google.common.collect.Lists;
 import com.jme3.material.Material;
@@ -55,14 +55,14 @@ public class HealthBar {
 	}
 
 	private Material getRedMaterial() {
-		Material material = new Material(ManagerAccess.getAssetManager(),
+		Material material = new Material(StaticAccess.getAssetManager(),
 				"Common/MatDefs/Misc/Unshaded.j3md");
 		material.setColor("Color", ColorRGBA.Red);
 		return material;
 	}
 
 	private Material getGreenMaterial() {
-		Material material = new Material(ManagerAccess.getAssetManager(),
+		Material material = new Material(StaticAccess.getAssetManager(),
 				"Common/MatDefs/Misc/Unshaded.j3md");
 		material.setColor("Color", ColorRGBA.Green);
 		return material;

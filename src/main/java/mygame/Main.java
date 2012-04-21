@@ -3,7 +3,7 @@ package mygame;
 import java.util.List;
 
 import util.Constants;
-import util.ManagerAccess;
+import util.StaticAccess;
 
 import com.google.common.collect.Lists;
 import com.jme3.app.SimpleApplication;
@@ -39,7 +39,7 @@ public class Main extends SimpleApplication {
 
 	@Override
 	public void simpleInitApp() {
-		ManagerAccess.setAssetManager(this.assetManager);
+		StaticAccess.setAssetManager(this.assetManager);
 
 		setupWindow();
 
@@ -52,6 +52,8 @@ public class Main extends SimpleApplication {
 
 		this.planets = Lists.newArrayList(enemyPlanet1, enemyPlanet2,
 				enemyPlanet3, enemyPlanet4, enemyPlanet5);
+
+		StaticAccess.setPlanets(this.planets);
 
 		this.display = Lists.newArrayList();
 		this.ships = Lists.newArrayList();
@@ -74,20 +76,13 @@ public class Main extends SimpleApplication {
 		this.rootNode.attachChild(this.score);
 		this.rootNode.attachChild(this.gold);
 
-		SmallShip smallShip = new SmallShip(this.homePlanet, enemyPlanet2,
-				this.homePlanet.getLocation());
-
-		this.ships.add(smallShip);
-
-		this.rootNode.attachChild(smallShip.getView());
-
 	}
 
 	@Override
 	public void simpleUpdate(float tpf) {
 
 		this.goldTimer += tpf;
-		if (this.goldTimer > Constants.GOLD_SPEED) {
+		if (this.goldTimer > Constants.GOLD_RATE) {
 			this.goldTimer = 0.0f;
 			for (Planet planet : this.planets) {
 				planet.goldTick();
@@ -101,6 +96,24 @@ public class Main extends SimpleApplication {
 			redrawDisplay();
 		}
 
+		updateShips(tpf);
+		updatePlanets(tpf);
+	}
+
+	private void updatePlanets(float tpf) {
+		for (Planet planet : this.planets) {
+			planet.update(tpf);
+			if (planet.getSendAttack()) {
+				SmallShip smallShip = new SmallShip(planet,
+						planet.getAttackTarget(), planet.getLocation());
+				this.ships.add(smallShip);
+				this.rootNode.attachChild(smallShip.getView());
+				planet.confirmAttack();
+			}
+		}
+	}
+
+	private void updateShips(float tpf) {
 		List<SmallShip> deadShips = Lists.newArrayList();
 
 		for (SmallShip ship : this.ships) {
