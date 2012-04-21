@@ -20,7 +20,7 @@ public class Planet implements Drawable {
 
 	public Planet(Vector3f location, float size) {
 		this.maxHealth = 100;
-		this.currentHealth = 100;
+		this.currentHealth = 70;
 		this.size = size;
 		this.location = location;
 		this.geometry = new Geometry("planet", new Circle(this.size, 32));
@@ -47,5 +47,13 @@ public class Planet implements Drawable {
 				"Common/MatDefs/Misc/Unshaded.j3md");
 		material.setColor("Color", ColorRGBA.White);
 		return material;
+	}
+
+	public int getMaxHealth() {
+		return this.maxHealth;
+	}
+
+	public int getCurrentHealth() {
+		return this.currentHealth;
 	}
 }
