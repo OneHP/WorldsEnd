@@ -5,8 +5,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>uk.co.onehp</groupId>
-  <artifactId>mumuration</artifactId>
-  <version>1.0</version>
+  <artifactId>WorldsEnd</artifactId>
+  <version>0.0.1</version>
   <dependencies>
   	<dependency>
   		<groupId>com.jme3</groupId>
