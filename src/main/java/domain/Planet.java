@@ -18,10 +18,10 @@ public class Planet implements Drawable {
 	private final Vector3f location;
 	private final Geometry geometry;
 
-	public Planet(Vector3f location) {
+	public Planet(Vector3f location, float size) {
 		this.maxHealth = 100;
 		this.currentHealth = 100;
-		this.size = 2.0f;
+		this.size = size;
 		this.location = location;
 		this.geometry = new Geometry("planet", new Circle(this.size, 32));
 		this.geometry.setMaterial(getMaterial());

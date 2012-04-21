@@ -25,13 +25,19 @@ public class Main extends SimpleApplication {
 		ManagerAccess.setAssetManager(this.assetManager);
 
 		this.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-		this.getCamera().setLocation(new Vector3f(0, 0, 15));
+		this.getCamera().setLocation(new Vector3f(0, 0, 100));
 		this.mouseInput.setCursorVisible(true);
 		this.inputManager.clearMappings();
 
-		this.planets = Lists.newArrayList();
+		Planet homePlanet = new Planet(new Vector3f(0, 0, 0), 2);
+		Planet enemyPlanet1 = new Planet(new Vector3f(40, 15, 0), 8);
+		Planet enemyPlanet2 = new Planet(new Vector3f(-10, 35, 0), 7);
+		Planet enemyPlanet3 = new Planet(new Vector3f(40, -40, 0), 9);
+		Planet enemyPlanet4 = new Planet(new Vector3f(-30, -10, 0), 5);
+		Planet enemyPlanet5 = new Planet(new Vector3f(-55, 20, 0), 8);
 
-		this.planets.add(new Planet(new Vector3f(0, 0, 0)));
+		this.planets = Lists.newArrayList(homePlanet, enemyPlanet1,
+				enemyPlanet2, enemyPlanet3, enemyPlanet4, enemyPlanet5);
 
 		for (Planet planet : this.planets) {
 			this.rootNode.attachChild(planet.getView());
