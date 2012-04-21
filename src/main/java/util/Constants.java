@@ -11,4 +11,5 @@ public class Constants {
 	public static float ACTION_RATE = 1.0f;
 	public static float ENGAGEMENT_RATE = 0.2f;
 	public static float ENGAGEMENT_DISTANCE = 0.8f;
+	public static float REVENGE_LIMIT = 20;
 }

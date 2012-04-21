@@ -2,11 +2,13 @@ package domain;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import util.Constants;
 import util.StaticAccess;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -119,8 +121,19 @@ public class Planet implements Drawable, Destructable, Updatable {
 		if (this.actionLimiter > Constants.ACTION_RATE) {
 			this.actionLimiter = 0.0f;
 			if (this.gold >= Constants.SMALL_SHIP_COST) {
-				List<Planet> planets = StaticAccess.getPlanets();
-				planets.remove(this);
+
+				List<Planet> planets = Lists.newArrayList();
+				for (Entry<Planet, Integer> entry : this.revengeMeter
+						.entrySet()) {
+					if (entry.getValue() > Constants.REVENGE_LIMIT) {
+						planets.add(entry.getKey());
+					}
+				}
+
+				if (0 == planets.size()) {
+					planets = StaticAccess.getPlanets();
+					planets.remove(this);
+				}
 				int planetIndex = this.random.nextInt(planets.size());
 				this.sendAttack = true;
 				this.attackTarget = planets.get(planetIndex);
