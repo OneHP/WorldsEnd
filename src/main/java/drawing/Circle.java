@@ -1,0 +1,94 @@
+package drawing;
+
+import java.nio.FloatBuffer;
+
+import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.util.BufferUtils;
+
+public class Circle extends Mesh {
+	/**
+	 * The center.
+	 */
+	private final Vector3f center;
+
+	/**
+	 * The radius.
+	 */
+	private final float radius;
+
+	/**
+	 * The samples.
+	 */
+	private final int samples;
+
+	/**
+	 * Constructs a new instance of this class.
+	 * 
+	 * @param radius
+	 */
+	public Circle(float radius) {
+		this(Vector3f.ZERO, radius, 16);
+	}
+
+	/**
+	 * Constructs a new instance of this class.
+	 * 
+	 * @param radius
+	 * @param samples
+	 */
+	public Circle(float radius, int samples) {
+		this(Vector3f.ZERO, radius, samples);
+	}
+
+	/**
+	 * Constructs a new instance of this class.
+	 * 
+	 * @param center
+	 * @param radius
+	 * @param samples
+	 */
+	public Circle(Vector3f center, float radius, int samples) {
+		super();
+		this.center = center;
+		this.radius = radius;
+		this.samples = samples;
+
+		setMode(Mode.Lines);
+		updateGeometry();
+	}
+
+	protected void updateGeometry() {
+		FloatBuffer positions = BufferUtils.createFloatBuffer(this.samples * 3);
+		FloatBuffer normals = BufferUtils.createFloatBuffer(this.samples * 3);
+		short[] indices = new short[this.samples * 2];
+
+		float rate = FastMath.TWO_PI / this.samples;
+		float angle = 0;
+		for (int i = 0; i < this.samples; i++) {
+			float x = FastMath.cos(angle) + this.center.x;
+			float z = FastMath.sin(angle) + this.center.z;
+
+			positions.put(x * this.radius).put(this.center.y)
+					.put(z * this.radius);
+			normals.put(new float[] { 0, 1, 0 });
+			indices[i * 2] = (short) i;
+			if (i < this.samples - 1)
+				indices[i * 2 + 1] = (short) (i + 1);
+			else
+				indices[i * 2 + 1] = 0;
+
+			angle += rate;
+		}
+
+		setBuffer(Type.Position, 3, positions);
+		setBuffer(Type.Normal, 3, normals);
+		setBuffer(Type.Index, 2, indices);
+
+		setBuffer(Type.TexCoord, 2, new float[] { 0, 0, 1, 1 });
+
+		updateBound();
+	}
+}
