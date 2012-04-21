@@ -9,7 +9,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 
-public class SmallShip implements Drawable, Destructable, Updatable {
+public class SmallShip implements Drawable, Destructable, Updatable, Ship {
 
 	private final int maxHealth;
 	private int currentHealth;

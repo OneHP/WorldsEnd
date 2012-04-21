@@ -26,12 +26,13 @@ import display.Menu;
 import display.MenuItem;
 import domain.Destructable;
 import domain.Planet;
+import domain.Ship;
 import domain.SmallShip;
 
 public class Main extends SimpleApplication {
 
 	private List<Planet> planets;
-	private List<SmallShip> ships;
+	private List<Ship> ships;
 	private List<Geometry> display;
 	private Planet homePlanet;
 
@@ -115,24 +116,24 @@ public class Main extends SimpleApplication {
 		if (this.battleLimiter > Constants.ENGAGEMENT_RATE) {
 			this.battleLimiter = 0.0f;
 
-			List<SmallShip> engagedShips = getShipsWithinEngagementRange();
+			List<Ship> engagedShips = getShipsWithinEngagementRange();
 
-			for (final SmallShip ship : engagedShips) {
-				List<SmallShip> otherShips = Lists.newArrayList(Iterables
-						.filter(engagedShips, new Predicate<SmallShip>() {
+			for (final Ship ship : engagedShips) {
+				List<Ship> otherShips = Lists.newArrayList(Iterables.filter(
+						engagedShips, new Predicate<Ship>() {
 							@Override
-							public boolean apply(SmallShip input) {
+							public boolean apply(Ship input) {
 								return (input.getOwner() != ship.getOwner())
 										&& input.getLocation().distance(
 												ship.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
 							}
 						}));
-				for (SmallShip otherShip : otherShips) {
+				for (Ship otherShip : otherShips) {
 					otherShip.takeDamage(1, ship.getOwner());
 				}
 			}
-			Set<SmallShip> deadShips = Sets.newHashSet();
-			for (SmallShip ship : this.ships) {
+			Set<Ship> deadShips = Sets.newHashSet();
+			for (Ship ship : this.ships) {
 				if (ship.getDead()) {
 					deadShips.add(ship);
 				}
@@ -144,19 +145,17 @@ public class Main extends SimpleApplication {
 		updatePlanets(tpf);
 	}
 
-	private List<SmallShip> getShipsWithinEngagementRange() {
-		List<SmallShip> engagedShips = Lists.newArrayList(Iterables.filter(
-				this.ships, new Predicate<SmallShip>() {
+	private List<Ship> getShipsWithinEngagementRange() {
+		List<Ship> engagedShips = Lists.newArrayList(Iterables.filter(
+				this.ships, new Predicate<Ship>() {
 					@Override
-					public boolean apply(final SmallShip outer) {
+					public boolean apply(final Ship outer) {
 						return Iterables.any(Main.this.ships,
-								new Predicate<SmallShip>() {
+								new Predicate<Ship>() {
 									@Override
-									public boolean apply(SmallShip inner) {
-										return inner
-												.getLocation()
-												.distance(
-														outer.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
+									public boolean apply(Ship inner) {
+										return inner.getLocation().distance(
+												outer.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
 									}
 								});
 					}
@@ -222,7 +221,7 @@ public class Main extends SimpleApplication {
 		}
 
 		private void launchAttack() {
-			SmallShip smallShip = new SmallShip(Main.this.homePlanet,
+			Ship smallShip = new SmallShip(Main.this.homePlanet,
 					Main.this.menu.getTarget(),
 					Main.this.homePlanet.getLocation());
 			Main.this.ships.add(smallShip);
@@ -276,7 +275,7 @@ public class Main extends SimpleApplication {
 		for (Planet planet : this.planets) {
 			planet.update(tpf);
 			if (planet.getSendAttack()) {
-				SmallShip smallShip = new SmallShip(planet,
+				Ship smallShip = new SmallShip(planet,
 						planet.getAttackTarget(), planet.getLocation());
 				this.ships.add(smallShip);
 				this.rootNode.attachChild(smallShip.getView());
@@ -286,9 +285,9 @@ public class Main extends SimpleApplication {
 	}
 
 	private void updateShips(float tpf) {
-		Set<SmallShip> deadShips = Sets.newHashSet();
+		Set<Ship> deadShips = Sets.newHashSet();
 
-		for (SmallShip ship : this.ships) {
+		for (Ship ship : this.ships) {
 			ship.update(tpf);
 			if (ship.getTargetHit()) {
 				int currentHealth = ship.getCurrentHealth();
@@ -303,8 +302,8 @@ public class Main extends SimpleApplication {
 		removeDeadShips(deadShips);
 	}
 
-	private void removeDeadShips(Set<SmallShip> deadShips) {
-		for (SmallShip ship : deadShips) {
+	private void removeDeadShips(Set<Ship> deadShips) {
+		for (Ship ship : deadShips) {
 			this.rootNode.detachChild(ship.getView());
 		}
 		this.ships.removeAll(deadShips);
@@ -320,7 +319,7 @@ public class Main extends SimpleApplication {
 		}
 		drawDestructableDisplay(this.homePlanet);
 
-		for (SmallShip ship : this.ships) {
+		for (Ship ship : this.ships) {
 			drawDestructableDisplay(ship);
 		}
 		this.score.setText(String.valueOf(this.homePlanet.getScore()));
