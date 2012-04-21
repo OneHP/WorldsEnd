@@ -18,7 +18,7 @@ public class Planet implements Drawable, Destructable {
 	private final float size;
 	private final Vector3f location;
 	private final Geometry geometry;
-	private int gold = 0;
+	private int gold = 10;
 	private int score = 0;
 
 	public Planet(Vector3f location, float size) {
@@ -78,4 +78,13 @@ public class Planet implements Drawable, Destructable {
 		this.gold += damage;
 		this.score += damage;
 	}
+
+	public int getGold() {
+		return this.gold;
+	}
+
+	public int getScore() {
+		return this.score;
+	}
+
 }

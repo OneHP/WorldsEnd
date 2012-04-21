@@ -2,10 +2,14 @@ package mygame;
 
 import java.util.List;
 
+import util.Constants;
 import util.ManagerAccess;
 
 import com.google.common.collect.Lists;
 import com.jme3.app.SimpleApplication;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.BitmapText;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
@@ -18,14 +22,14 @@ import domain.SmallShip;
 public class Main extends SimpleApplication {
 
 	private List<Planet> planets;
-
 	private List<SmallShip> ships;
-
 	private List<Geometry> display;
+	private Planet homePlanet;
 
 	private float limiter = 0.0f;
 
-	private Planet homePlanet;
+	private BitmapText score;
+	private BitmapText gold;
 
 	public static void main(String[] args) {
 		Main app = new Main();
@@ -56,8 +60,21 @@ public class Main extends SimpleApplication {
 			this.rootNode.attachChild(planet.getView());
 		}
 
-		SmallShip smallShip = new SmallShip(enemyPlanet1, enemyPlanet2,
-				enemyPlanet1.getLocation());
+		BitmapFont font = this.assetManager
+				.loadFont("Interface/Fonts/Default.fnt");
+		this.score = new BitmapText(font, false);
+		this.score.setSize(Constants.GUI_FONT_SIZE);
+		this.score.setColor(ColorRGBA.Green);
+		this.score.setLocalTranslation(new Vector3f(65, 40, 0));
+		this.gold = new BitmapText(font, false);
+		this.gold.setSize(Constants.GUI_FONT_SIZE);
+		this.gold.setColor(ColorRGBA.Yellow);
+		this.gold.setLocalTranslation(new Vector3f(65, 38, 0));
+		this.rootNode.attachChild(this.score);
+		this.rootNode.attachChild(this.gold);
+
+		SmallShip smallShip = new SmallShip(this.homePlanet, enemyPlanet2,
+				this.homePlanet.getLocation());
 
 		this.ships.add(smallShip);
 
@@ -104,7 +121,8 @@ public class Main extends SimpleApplication {
 		for (SmallShip ship : this.ships) {
 			drawDestructableDisplay(ship);
 		}
-
+		this.score.setText(String.valueOf(this.homePlanet.getScore()));
+		this.gold.setText(String.valueOf(this.homePlanet.getGold()));
 	}
 
 	private void drawDestructableDisplay(Destructable destructable) {
