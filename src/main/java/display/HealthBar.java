@@ -13,6 +13,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Line;
 
 import domain.Planet;
+import domain.SmallShip;
 
 public class HealthBar {
 
@@ -24,20 +25,26 @@ public class HealthBar {
 
 	public HealthBar(Planet planet) {
 		this(planet.getLocation().add(planet.getSize(), planet.getSize(), 0),
-				planet.getMaxHealth(), planet.getCurrentHealth());
+				planet.getMaxHealth(), planet.getCurrentHealth(),
+				Constants.PLANET_HEALTH_BAR_SIZE);
 	}
 
-	public HealthBar(Vector3f center, int max, int current) {
+	public HealthBar(SmallShip ship) {
+		this(ship.getLocation().add(1, 1, 0), ship.getMaxHealth(), ship
+				.getCurrentHealth(), Constants.SHIP_HEALTH_BAR_SIZE);
+	}
+
+	public HealthBar(Vector3f center, int max, int current, float barSize) {
 
 		this.center = center;
 		this.max = max;
 		this.current = current;
 
 		float health = (float) current / (float) max;
-		float greenSize = health * Constants.HEALTH_BAR_SIZE;
-		float greenStart = center.x - (Constants.HEALTH_BAR_SIZE / 2);
+		float greenSize = health * barSize;
+		float greenStart = center.x - (barSize / 2);
 		float redStart = greenStart + greenSize;
-		float end = greenStart + Constants.HEALTH_BAR_SIZE;
+		float end = greenStart + barSize;
 
 		Geometry green = new Geometry("healthBar", centeredBar(greenStart,
 				redStart));
