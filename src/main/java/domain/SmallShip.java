@@ -9,35 +9,14 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 
-public class SmallShip implements Drawable, Destructable, Updatable, Ship {
-
-	private final int maxHealth;
-	private int currentHealth;
-	private final Vector3f location;
-	private final Geometry geometry;
-	private final Planet owner;
-	private final Planet target;
-	private boolean targetHit = false;
+public class SmallShip extends AbstractShip {
 
 	public SmallShip(Planet owner, Planet target, Vector3f location) {
-		this.owner = owner;
-		this.target = target;
-		this.maxHealth = 10;
-		this.currentHealth = 10;
-		this.location = location;
-		this.geometry = new Geometry("smallShip", new SmallShipMesh());
-		this.geometry.setMaterial(getMaterial());
-		this.geometry.setLocalTranslation(location);
-	}
-
-	@Override
-	public Vector3f getLocation() {
-		return this.geometry.getLocalTranslation();
-	}
-
-	@Override
-	public Geometry getView() {
-		return this.geometry;
+		super(owner, target, location);
+		Geometry geo = new Geometry("smallShip", new SmallShipMesh());
+		geo.setMaterial(getMaterial());
+		geo.setLocalTranslation(location);
+		super.setGeometry(geo);
 	}
 
 	private Material getMaterial() {
@@ -45,21 +24,6 @@ public class SmallShip implements Drawable, Destructable, Updatable, Ship {
 				"Common/MatDefs/Misc/Unshaded.j3md");
 		material.setColor("Color", ColorRGBA.White);
 		return material;
-	}
-
-	@Override
-	public int getMaxHealth() {
-		return this.maxHealth;
-	}
-
-	@Override
-	public int getCurrentHealth() {
-		return this.currentHealth;
-	}
-
-	@Override
-	public float getHealthBarSize() {
-		return Constants.SHIP_HEALTH_BAR_SIZE;
 	}
 
 	@Override
@@ -73,32 +37,10 @@ public class SmallShip implements Drawable, Destructable, Updatable, Ship {
 				.subtract(this.getLocation()).normalize();
 		Vector3f movement = targetHeading
 				.mult(tpf * Constants.SMALL_SHIP_SPEED);
-		this.geometry.move(movement);
+		getView().move(movement);
 		if (this.getLocation().distance(this.getTarget().getLocation()) < this
 				.getTarget().getSize()) {
-			this.targetHit = true;
+			setTargetHit(true);
 		}
-	}
-
-	public boolean getTargetHit() {
-		return this.targetHit;
-	}
-
-	public Planet getTarget() {
-		return this.target;
-	}
-
-	@Override
-	public void takeDamage(int damage, Planet source) {
-		this.currentHealth -= damage;
-	}
-
-	public Planet getOwner() {
-		return this.owner;
-	}
-
-	@Override
-	public boolean getDead() {
-		return this.currentHealth <= 0;
 	}
 }
