@@ -7,19 +7,22 @@ public abstract class MenuItem {
 	private final String item;
 	private MenuItem parent;
 	private final List<MenuItem> subMenu;
-	private final int selectedIndex;
+	private int selectedIndex;
 
 	public MenuItem(String item, List<MenuItem> subMenu) {
 		this.parent = null;
 		this.item = item;
 		this.subMenu = subMenu;
-		this.selectedIndex = subMenu.size() > 0 ? 1 : 0;
+		this.selectedIndex = subMenu.size() > 0 ? 0 : -1;
 		for (MenuItem menuItem : subMenu) {
 			menuItem.setParent(this);
 		}
 	}
 
-	public abstract void action();
+	/**
+	 * @return true if menu needs closing
+	 */
+	public abstract boolean action();
 
 	public void setParent(MenuItem parent) {
 		this.parent = parent;
@@ -30,15 +33,28 @@ public abstract class MenuItem {
 	}
 
 	public MenuItem getSelectedItem() {
-		return this.subMenu.get(this.selectedIndex);
+		return -1 == this.selectedIndex ? null : this.subMenu
+				.get(this.selectedIndex);
 	}
 
 	public String getItem() {
-		return item;
+		return this.item;
 	}
 
 	public List<MenuItem> getSubMenu() {
-		return subMenu;
+		return this.subMenu;
+	}
+
+	public int getSelectedIndex() {
+		return this.selectedIndex;
+	}
+
+	public void increaseSelection() {
+		this.selectedIndex++;
+	}
+
+	public void decreaseSelection() {
+		this.selectedIndex--;
 	}
 
 }

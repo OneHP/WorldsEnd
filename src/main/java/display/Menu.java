@@ -14,42 +14,44 @@ public class Menu {
 
 		MenuItem item1_1 = new MenuItem("Item 1 - 1", empty) {
 			@Override
-			public void action() {
-				// TODO Auto-generated method stub
+			public boolean action() {
+				return true;
 			}
 		};
 		MenuItem item1_2 = new MenuItem("Item 1 - 2", empty) {
 			@Override
-			public void action() {
-				// TODO Auto-generated method stub
+			public boolean action() {
+				return true;
 			}
 		};
 
 		MenuItem item1 = new MenuItem("Send Ship", Lists.newArrayList(item1_1,
 				item1_2)) {
 			@Override
-			public void action() {
+			public boolean action() {
 				Menu.this.root = getSelectedItem();
+				return false;
 			}
 		};
 		MenuItem item2 = new MenuItem("Item 2", empty) {
 			@Override
-			public void action() {
-				// TODO Auto-generated method stub
+			public boolean action() {
+				return true;
 			}
 		};
 		MenuItem item3 = new MenuItem("Item 3", empty) {
 			@Override
-			public void action() {
-				// TODO Auto-generated method stub
+			public boolean action() {
+				return true;
 			}
 		};
 
 		this.root = new MenuItem("Main",
 				Lists.newArrayList(item1, item2, item3)) {
 			@Override
-			public void action() {
+			public boolean action() {
 				Menu.this.root = getSelectedItem();
+				return false;
 			}
 		};
 
@@ -58,6 +60,19 @@ public class Menu {
 	public void upALevel() {
 		if (null != this.root.getParent()) {
 			this.root = this.root.getParent();
+		}
+	}
+
+	public void navigateUp() {
+		if (this.root.getSelectedIndex() > 0) {
+			this.root.decreaseSelection();
+		}
+	}
+
+	public void navigateDown() {
+
+		if (this.root.getSelectedIndex() < (this.root.getSubMenu().size() - 1)) {
+			this.root.increaseSelection();
 		}
 	}
 

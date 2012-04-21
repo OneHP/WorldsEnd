@@ -13,6 +13,9 @@ import com.google.common.collect.Sets;
 import com.jme3.app.SimpleApplication;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -39,6 +42,8 @@ public class Main extends SimpleApplication {
 	private BitmapText score;
 	private BitmapText gold;
 
+	private boolean menuDisplayed = false;
+	Menu menu;
 	private List<BitmapText> menuText;
 
 	public static void main(String[] args) {
@@ -85,7 +90,7 @@ public class Main extends SimpleApplication {
 		this.rootNode.attachChild(this.score);
 		this.rootNode.attachChild(this.gold);
 
-		displayMenu();
+		initKeys();
 	}
 
 	@Override
@@ -136,26 +141,95 @@ public class Main extends SimpleApplication {
 		updatePlanets(tpf);
 	}
 
+	private void initKeys() {
+		this.inputManager.addMapping("Action", new KeyTrigger(
+				KeyInput.KEY_RETURN));
+		this.inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_UP));
+		this.inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_DOWN));
+		this.inputManager.addMapping("Back", new KeyTrigger(KeyInput.KEY_BACK));
+		this.inputManager.addListener(this.actionListener, new String[] {
+				"Action", "Up", "Down", "Back" });
+	}
+
+	private final ActionListener actionListener = new ActionListener() {
+		@Override
+		public void onAction(String name, boolean keyPressed, float tpf) {
+			if (name.equals("Action") && !keyPressed) {
+				if (Main.this.menuDisplayed) {
+					removeMenu();
+					if (Main.this.menu.getRoot().action()) {
+						Main.this.menuDisplayed = false;
+					} else {
+						drawMenu();
+					}
+				} else {
+					displayMenu();
+				}
+			}
+			if (name.equals("Back") && !keyPressed) {
+				if (Main.this.menuDisplayed) {
+					removeMenu();
+					if (null == Main.this.menu.getRoot().getParent()) {
+						Main.this.menuDisplayed = false;
+					} else {
+						Main.this.menu.upALevel();
+						drawMenu();
+					}
+				}
+			}
+			if (name.equals("Up") && !keyPressed) {
+				if (Main.this.menuDisplayed) {
+					Main.this.menu.navigateUp();
+					removeMenu();
+					drawMenu();
+				}
+			}
+			if (name.equals("Down") && !keyPressed) {
+				if (Main.this.menuDisplayed) {
+					Main.this.menu.navigateDown();
+					removeMenu();
+					drawMenu();
+				}
+			}
+		}
+	};
+
 	private void displayMenu() {
+		this.menuDisplayed = true;
+		this.menu = new Menu();
+		drawMenu();
+	}
+
+	private void drawMenu() {
 		this.menuText = Lists.newArrayList();
-		Menu menu = new Menu();
-		MenuItem root = menu.getRoot();
-		this.menuText.add(menuText(root, 0, 0));
-		for (int i = 0; i < root.getSubMenu().size(); i++) {
-			this.menuText.add(menuText(root.getSubMenu().get(i), 1, 1 + i));
+		MenuItem root = this.menu.getRoot();
+		this.menuText.add(menuText(root, false, 0, 0));
+		List<MenuItem> subMenu = root.getSubMenu();
+		for (int i = 0; i < subMenu.size(); i++) {
+			MenuItem menuItem = subMenu.get(i);
+			this.menuText.add(menuText(menuItem,
+					menuItem == root.getSelectedItem(), 1, 1 + i));
 		}
 		for (BitmapText text : this.menuText) {
 			this.rootNode.attachChild(text);
 		}
 	}
 
-	private BitmapText menuText(MenuItem menuItem, int depth, int bredth) {
+	private void removeMenu() {
+		for (BitmapText text : this.menuText) {
+			this.rootNode.detachChild(text);
+		}
+	}
+
+	private BitmapText menuText(MenuItem menuItem, boolean selected, int depth,
+			int bredth) {
 		BitmapFont font = this.assetManager
 				.loadFont("Interface/Fonts/Default.fnt");
 		BitmapText text = new BitmapText(font, false);
 		text.setText(menuItem.getItem());
 		text.setSize(Constants.GUI_FONT_SIZE);
-		text.setColor(new ColorRGBA(1.0f, 1.0f, 1.0f, 0.5f));
+		text.setColor(new ColorRGBA(selected ? 0.0f : 1.0f, 1.0f,
+				selected ? 0.0f : 1.0f, 0.5f));
 		text.setLocalTranslation(new Vector3f(-72.5f + (depth * 2),
 				40 - (bredth * 2), 0));
 		return text;
