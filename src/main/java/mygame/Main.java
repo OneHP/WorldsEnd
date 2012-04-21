@@ -11,6 +11,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 
 import display.HealthBar;
+import domain.Destructable;
 import domain.Planet;
 import domain.SmallShip;
 
@@ -79,24 +80,18 @@ public class Main extends SimpleApplication {
 		}
 
 		for (Planet planet : this.planets) {
-			drawPlanetDisplay(planet);
+			drawDestructableDisplay(planet);
 		}
-		drawPlanetDisplay(this.homePlanet);
+		drawDestructableDisplay(this.homePlanet);
 
 		for (SmallShip ship : this.ships) {
-			drawShipDisplay(ship);
+			drawDestructableDisplay(ship);
 		}
 
 	}
 
-	private void drawPlanetDisplay(Planet planet) {
-		for (Geometry geometry : new HealthBar(planet).getParts()) {
-			this.rootNode.attachChild(geometry);
-		}
-	}
-
-	private void drawShipDisplay(SmallShip ship) {
-		for (Geometry geometry : new HealthBar(ship).getParts()) {
+	private void drawDestructableDisplay(Destructable destructable) {
+		for (Geometry geometry : new HealthBar(destructable).getParts()) {
 			this.rootNode.attachChild(geometry);
 		}
 	}

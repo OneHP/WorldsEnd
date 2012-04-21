@@ -2,7 +2,6 @@ package display;
 
 import java.util.List;
 
-import util.Constants;
 import util.ManagerAccess;
 
 import com.google.common.collect.Lists;
@@ -12,8 +11,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Line;
 
-import domain.Planet;
-import domain.SmallShip;
+import domain.Destructable;
 
 public class HealthBar {
 
@@ -23,15 +21,11 @@ public class HealthBar {
 
 	private final List<Geometry> parts = Lists.newArrayList();
 
-	public HealthBar(Planet planet) {
-		this(planet.getLocation().add(planet.getSize(), planet.getSize(), 0),
-				planet.getMaxHealth(), planet.getCurrentHealth(),
-				Constants.PLANET_HEALTH_BAR_SIZE);
-	}
-
-	public HealthBar(SmallShip ship) {
-		this(ship.getLocation().add(1, 1, 0), ship.getMaxHealth(), ship
-				.getCurrentHealth(), Constants.SHIP_HEALTH_BAR_SIZE);
+	public HealthBar(Destructable destructable) {
+		this(destructable.getLocation().add(destructable.getSize(),
+				destructable.getSize(), 0), destructable.getMaxHealth(),
+				destructable.getCurrentHealth(), destructable
+						.getHealthBarSize());
 	}
 
 	public HealthBar(Vector3f center, int max, int current, float barSize) {

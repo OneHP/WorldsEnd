@@ -1,5 +1,6 @@
 package domain;
 
+import util.Constants;
 import util.ManagerAccess;
 
 import com.jme3.material.Material;
@@ -10,7 +11,7 @@ import com.jme3.scene.Geometry;
 
 import drawing.Circle;
 
-public class Planet implements Drawable {
+public class Planet implements Drawable, Destructable {
 
 	private final int maxHealth;
 	private final int currentHealth;
@@ -29,10 +30,12 @@ public class Planet implements Drawable {
 		this.geometry.setLocalTranslation(location);
 	}
 
+	@Override
 	public Vector3f getLocation() {
 		return this.location;
 	}
 
+	@Override
 	public float getSize() {
 		return this.size;
 	}
@@ -49,11 +52,18 @@ public class Planet implements Drawable {
 		return material;
 	}
 
+	@Override
 	public int getMaxHealth() {
 		return this.maxHealth;
 	}
 
+	@Override
 	public int getCurrentHealth() {
 		return this.currentHealth;
+	}
+
+	@Override
+	public float getHealthBarSize() {
+		return Constants.PLANET_HEALTH_BAR_SIZE;
 	}
 }
