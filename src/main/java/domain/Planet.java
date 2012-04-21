@@ -118,7 +118,7 @@ public class Planet implements Drawable, Destructable, Updatable {
 		this.actionLimiter += tpf;
 		if (this.actionLimiter > Constants.ACTION_RATE) {
 			this.actionLimiter = 0.0f;
-			if (this.gold > Constants.SMALL_SHIP_COST) {
+			if (this.gold >= Constants.SMALL_SHIP_COST) {
 				List<Planet> planets = StaticAccess.getPlanets();
 				planets.remove(this);
 				int planetIndex = this.random.nextInt(planets.size());
