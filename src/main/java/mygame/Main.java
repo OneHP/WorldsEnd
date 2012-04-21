@@ -72,6 +72,7 @@ public class Main extends SimpleApplication {
 		this.planets = Lists.newArrayList(enemyPlanet1, enemyPlanet2,
 				enemyPlanet3, enemyPlanet4, enemyPlanet5);
 
+		StaticAccess.setHomePlanet(this.homePlanet);
 		StaticAccess.setPlanets(this.planets);
 
 		this.display = Lists.newArrayList();
@@ -145,6 +146,23 @@ public class Main extends SimpleApplication {
 					deadShips.add(ship);
 				}
 			}
+
+			Set<Planet> deadPlanets = Sets.newHashSet();
+			for (Planet planet : this.planets) {
+				if (planet.getDead()) {
+					deadPlanets.add(planet);
+				}
+			}
+			for (Planet planet : deadPlanets) {
+				this.rootNode.detachChild(planet.getView());
+			}
+			this.planets.removeAll(deadPlanets);
+			for (Ship ship : this.ships) {
+				if (deadPlanets.contains(ship.getTarget())) {
+					deadShips.add(ship);
+				}
+			}
+
 			removeDeadShips(deadShips);
 		}
 

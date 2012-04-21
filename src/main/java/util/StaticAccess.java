@@ -11,6 +11,7 @@ public class StaticAccess {
 
 	private static AssetManager ASSET_MANAGER = null;
 	private static List<Planet> PLANETS = null;
+	private static Planet HOME_PLANET = null;
 
 	public static void setAssetManager(AssetManager assetManager) {
 		ASSET_MANAGER = assetManager;
@@ -26,5 +27,13 @@ public class StaticAccess {
 
 	public static void setPlanets(List<Planet> planets) {
 		PLANETS = planets;
+	}
+
+	public static Planet getHomePlanet() {
+		return HOME_PLANET;
+	}
+
+	public static void setHomePlanet(Planet homePlanet) {
+		HOME_PLANET = homePlanet;
 	}
 }
