@@ -24,6 +24,7 @@ import com.jme3.scene.Geometry;
 import display.HealthBar;
 import display.Menu;
 import display.MenuItem;
+import domain.BomberShip;
 import domain.Destructable;
 import domain.Planet;
 import domain.Ship;
@@ -36,15 +37,18 @@ public class Main extends SimpleApplication {
 	private List<Geometry> display;
 	private Planet homePlanet;
 
+	private List<Ship> launchQueue;
+
 	private float displayLimiter = 0.0f;
 	private float battleLimiter = 0.0f;
 	private float goldTimer = 0.0f;
+	private float actionLimiter = 0.0f;
 
 	private BitmapText score;
 	private BitmapText gold;
 
 	private boolean menuDisplayed = false;
-	Menu menu;
+	private Menu menu;
 	private List<BitmapText> menuText;
 
 	public static void main(String[] args) {
@@ -72,6 +76,7 @@ public class Main extends SimpleApplication {
 
 		this.display = Lists.newArrayList();
 		this.ships = Lists.newArrayList();
+		this.launchQueue = Lists.newArrayList();
 
 		this.rootNode.attachChild(this.homePlanet.getView());
 		for (Planet planet : this.planets) {
@@ -143,6 +148,7 @@ public class Main extends SimpleApplication {
 
 		updateShips(tpf);
 		updatePlanets(tpf);
+		updateHomePlanet(tpf);
 	}
 
 	private List<Ship> getShipsWithinEngagementRange() {
@@ -181,9 +187,7 @@ public class Main extends SimpleApplication {
 					removeMenu();
 					if (Main.this.menu.getRoot().action()) {
 						if (Main.this.menu.getLaunchAttack()) {
-							if (Main.this.homePlanet.getGold() >= Constants.SMALL_SHIP_COST) {
-								launchAttack();
-							}
+							launchAttack(Main.this.menu.getShipType());
 						}
 						Main.this.menuDisplayed = false;
 					} else {
@@ -220,13 +224,19 @@ public class Main extends SimpleApplication {
 			}
 		}
 
-		private void launchAttack() {
-			Ship smallShip = new SmallShip(Main.this.homePlanet,
-					Main.this.menu.getTarget(),
-					Main.this.homePlanet.getLocation());
-			Main.this.ships.add(smallShip);
-			Main.this.rootNode.attachChild(smallShip.getView());
-			Main.this.homePlanet.confirmAttack();
+		private void launchAttack(Class<? extends Ship> clazz) {
+			Ship ship = null;
+			if (clazz == SmallShip.class) {
+				ship = new SmallShip(Main.this.homePlanet,
+						Main.this.menu.getTarget(),
+						Main.this.homePlanet.getLocation());
+			} else if (clazz == BomberShip.class) {
+				ship = new BomberShip(Main.this.homePlanet,
+						Main.this.menu.getTarget(),
+						Main.this.homePlanet.getLocation());
+			}
+
+			Main.this.launchQueue.add(ship);
 		}
 	};
 
@@ -282,6 +292,25 @@ public class Main extends SimpleApplication {
 				planet.confirmAttack();
 			}
 		}
+	}
+
+	private void updateHomePlanet(float tpf) {
+
+		this.actionLimiter += tpf;
+		if (this.actionLimiter > Constants.ACTION_RATE) {
+			this.actionLimiter = 0.0f;
+			if (this.launchQueue.size() > 0) {
+				Ship ship = this.launchQueue.remove(0);
+				if (ship.cost() <= this.homePlanet.getGold()) {
+					this.ships.add(ship);
+					Main.this.rootNode.attachChild(ship.getView());
+					Main.this.homePlanet.confirmAttack();
+				} else {
+					this.launchQueue.add(ship);
+				}
+			}
+		}
+
 	}
 
 	private void updateShips(float tpf) {

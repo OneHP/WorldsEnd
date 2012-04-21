@@ -6,13 +6,17 @@ import util.StaticAccess;
 
 import com.google.common.collect.Lists;
 
+import domain.BomberShip;
 import domain.Planet;
+import domain.Ship;
+import domain.SmallShip;
 
 public class Menu {
 
 	private MenuItem root;
 	private boolean launchAttack;
 	private Planet target;
+	private Class<? extends Ship> shipType;
 
 	public Menu() {
 
@@ -35,12 +39,22 @@ public class Menu {
 			@Override
 			public boolean action() {
 				Menu.this.root = getSelectedItem();
+				Menu.this.shipType = SmallShip.class;
 				return false;
 			}
 		};
 
-		MenuItem sendShip = new MenuItem("Send Ship",
-				Lists.newArrayList(smallShip)) {
+		MenuItem bomberShip = new MenuItem("Bomber Ship", planetsMenuItems) {
+			@Override
+			public boolean action() {
+				Menu.this.root = getSelectedItem();
+				Menu.this.shipType = BomberShip.class;
+				return false;
+			}
+		};
+
+		MenuItem sendShip = new MenuItem("Send Ship", Lists.newArrayList(
+				smallShip, bomberShip)) {
 			@Override
 			public boolean action() {
 				Menu.this.root = getSelectedItem();
@@ -87,5 +101,9 @@ public class Menu {
 
 	public Planet getTarget() {
 		return this.target;
+	}
+
+	public Class<? extends Ship> getShipType() {
+		return this.shipType;
 	}
 }

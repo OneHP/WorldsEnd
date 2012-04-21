@@ -45,4 +45,9 @@ public class BomberShip extends AbstractShip {
 		}
 	}
 
+	@Override
+	public int cost() {
+		return Constants.BOMBER_SHIP_COST;
+	}
+
 }

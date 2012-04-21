@@ -44,4 +44,9 @@ public class SmallShip extends AbstractShip {
 			setTargetHit(true);
 		}
 	}
+
+	@Override
+	public int cost() {
+		return Constants.SMALL_SHIP_COST;
+	}
 }
