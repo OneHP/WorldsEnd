@@ -13,4 +13,6 @@ public interface Destructable {
 	int getMaxHealth();
 
 	int getCurrentHealth();
+
+	void takeDamage(int damage);
 }

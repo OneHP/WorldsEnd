@@ -73,9 +73,20 @@ public class Main extends SimpleApplication {
 			redrawDisplay();
 		}
 
+		List<SmallShip> deadShips = Lists.newArrayList();
+
 		for (SmallShip ship : this.ships) {
 			ship.update(tpf);
+			if (ship.getTargetHit()) {
+				ship.getTarget().takeDamage(ship.getCurrentHealth());
+				deadShips.add(ship);
+			}
 		}
+
+		for (SmallShip ship : deadShips) {
+			this.rootNode.detachChild(ship.getView());
+		}
+		this.ships.removeAll(deadShips);
 	}
 
 	private void redrawDisplay() {

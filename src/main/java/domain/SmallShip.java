@@ -12,17 +12,18 @@ import com.jme3.scene.Geometry;
 public class SmallShip implements Drawable, Destructable, Updatable {
 
 	private final int maxHealth;
-	private final int currentHealth;
+	private int currentHealth;
 	private final Vector3f location;
 	private final Geometry geometry;
 	private final Planet owner;
 	private final Planet target;
+	private boolean targetHit = false;
 
 	public SmallShip(Planet owner, Planet target, Vector3f location) {
 		this.owner = owner;
 		this.target = target;
-		this.maxHealth = 10;
-		this.currentHealth = 7;
+		this.maxHealth = 50;
+		this.currentHealth = 30;
 		this.location = location;
 		this.geometry = new Geometry("smallShip", new SmallShipMesh());
 		this.geometry.setMaterial(getMaterial());
@@ -68,11 +69,28 @@ public class SmallShip implements Drawable, Destructable, Updatable {
 
 	@Override
 	public void update(float tpf) {
-		Vector3f targetHeading = this.target.getLocation()
+		Vector3f targetHeading = this.getTarget().getLocation()
 				.subtract(this.getLocation()).normalize();
 		Vector3f movement = targetHeading
 				.mult(tpf * Constants.SMALL_SHIP_SPEED);
 		this.geometry.move(movement);
+		if (this.getLocation().distance(this.getTarget().getLocation()) < this
+				.getTarget().getSize()) {
+			this.targetHit = true;
+		}
+	}
+
+	public boolean getTargetHit() {
+		return this.targetHit;
+	}
+
+	public Planet getTarget() {
+		return this.target;
+	}
+
+	@Override
+	public void takeDamage(int damage) {
+		this.currentHealth -= damage;
 	}
 
 }

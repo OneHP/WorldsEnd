@@ -14,7 +14,7 @@ import drawing.Circle;
 public class Planet implements Drawable, Destructable {
 
 	private final int maxHealth;
-	private final int currentHealth;
+	private int currentHealth;
 	private final float size;
 	private final Vector3f location;
 	private final Geometry geometry;
@@ -65,5 +65,10 @@ public class Planet implements Drawable, Destructable {
 	@Override
 	public float getHealthBarSize() {
 		return Constants.PLANET_HEALTH_BAR_SIZE;
+	}
+
+	@Override
+	public void takeDamage(int damage) {
+		this.currentHealth -= damage;
 	}
 }
