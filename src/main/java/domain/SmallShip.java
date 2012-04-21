@@ -9,7 +9,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 
-public class SmallShip implements Drawable, Destructable {
+public class SmallShip implements Drawable, Destructable, Updatable {
 
 	private final int maxHealth;
 	private final int currentHealth;
@@ -31,7 +31,7 @@ public class SmallShip implements Drawable, Destructable {
 
 	@Override
 	public Vector3f getLocation() {
-		return this.location;
+		return this.geometry.getLocalTranslation();
 	}
 
 	@Override
@@ -64,6 +64,15 @@ public class SmallShip implements Drawable, Destructable {
 	@Override
 	public float getSize() {
 		return 1.0f;
+	}
+
+	@Override
+	public void update(float tpf) {
+		Vector3f targetHeading = this.target.getLocation()
+				.subtract(this.getLocation()).normalize();
+		Vector3f movement = targetHeading
+				.mult(tpf * Constants.SMALL_SHIP_SPEED);
+		this.geometry.move(movement);
 	}
 
 }

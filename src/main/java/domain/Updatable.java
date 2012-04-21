@@ -2,6 +2,6 @@ package domain;
 
 public interface Updatable {
 
-	void update();
+	void update(float tpf);
 
 }

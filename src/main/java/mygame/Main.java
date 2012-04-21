@@ -68,9 +68,13 @@ public class Main extends SimpleApplication {
 	@Override
 	public void simpleUpdate(float tpf) {
 		this.limiter += tpf;
-		if (this.limiter > 1.0f) {
+		if (this.limiter > 0.1f) {
 			this.limiter = 0.0f;
 			redrawDisplay();
+		}
+
+		for (SmallShip ship : this.ships) {
+			ship.update(tpf);
 		}
 	}
 
@@ -92,6 +96,7 @@ public class Main extends SimpleApplication {
 
 	private void drawDestructableDisplay(Destructable destructable) {
 		for (Geometry geometry : new HealthBar(destructable).getParts()) {
+			this.display.add(geometry);
 			this.rootNode.attachChild(geometry);
 		}
 	}
