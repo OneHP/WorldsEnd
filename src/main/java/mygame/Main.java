@@ -78,7 +78,9 @@ public class Main extends SimpleApplication {
 		for (SmallShip ship : this.ships) {
 			ship.update(tpf);
 			if (ship.getTargetHit()) {
-				ship.getTarget().takeDamage(ship.getCurrentHealth());
+				int currentHealth = ship.getCurrentHealth();
+				ship.getTarget().takeDamage(currentHealth);
+				ship.getOwner().scoreDamage(currentHealth);
 				deadShips.add(ship);
 			}
 		}

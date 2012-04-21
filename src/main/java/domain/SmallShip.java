@@ -22,8 +22,8 @@ public class SmallShip implements Drawable, Destructable, Updatable {
 	public SmallShip(Planet owner, Planet target, Vector3f location) {
 		this.owner = owner;
 		this.target = target;
-		this.maxHealth = 50;
-		this.currentHealth = 30;
+		this.maxHealth = 10;
+		this.currentHealth = 10;
 		this.location = location;
 		this.geometry = new Geometry("smallShip", new SmallShipMesh());
 		this.geometry.setMaterial(getMaterial());
@@ -91,6 +91,10 @@ public class SmallShip implements Drawable, Destructable, Updatable {
 	@Override
 	public void takeDamage(int damage) {
 		this.currentHealth -= damage;
+	}
+
+	public Planet getOwner() {
+		return owner;
 	}
 
 }

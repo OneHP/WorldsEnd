@@ -18,10 +18,12 @@ public class Planet implements Drawable, Destructable {
 	private final float size;
 	private final Vector3f location;
 	private final Geometry geometry;
+	private int gold = 0;
+	private int score = 0;
 
 	public Planet(Vector3f location, float size) {
 		this.maxHealth = 100;
-		this.currentHealth = 70;
+		this.currentHealth = 100;
 		this.size = size;
 		this.location = location;
 		this.geometry = new Geometry("planet", new Circle(this.size, 32));
@@ -70,5 +72,10 @@ public class Planet implements Drawable, Destructable {
 	@Override
 	public void takeDamage(int damage) {
 		this.currentHealth -= damage;
+	}
+
+	public void scoreDamage(int damage) {
+		this.gold += damage;
+		this.score += damage;
 	}
 }
