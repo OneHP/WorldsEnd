@@ -310,10 +310,17 @@ public class Main extends SimpleApplication {
 		for (Planet planet : this.planets) {
 			planet.update(tpf);
 			if (planet.getSendAttack()) {
-				Ship smallShip = new SmallShip(planet,
-						planet.getAttackTarget(), planet.getLocation());
-				this.ships.add(smallShip);
-				this.rootNode.attachChild(smallShip.getView());
+				Ship ship = null;
+				Class<? extends Ship> clazz = planet.getShipType();
+				if (clazz == SmallShip.class) {
+					ship = new SmallShip(planet, planet.getAttackTarget(),
+							planet.getLocation());
+				} else if (clazz == BomberShip.class) {
+					ship = new BomberShip(planet, planet.getAttackTarget(),
+							planet.getLocation());
+				}
+				this.ships.add(ship);
+				this.rootNode.attachChild(ship.getView());
 				planet.confirmAttack();
 			}
 		}

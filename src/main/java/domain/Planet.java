@@ -33,6 +33,8 @@ public class Planet implements Drawable, Destructable, Updatable {
 	private final Random random = new Random();
 	private boolean sendAttack = false;
 	private Planet attackTarget = null;
+	private Class<? extends Ship> shipType = null;
+	private int goldReserve = 0;
 
 	public Planet(Vector3f location, float size) {
 		this.maxHealth = 100;
@@ -120,26 +122,37 @@ public class Planet implements Drawable, Destructable, Updatable {
 		this.actionLimiter += tpf;
 		if (this.actionLimiter > Constants.ACTION_RATE) {
 			this.actionLimiter = 0.0f;
-			if (this.gold >= Constants.SMALL_SHIP_COST) {
+			if (this.random.nextInt((int) Constants.BOMBER_PREFERENCE_RATE) == 1
+					&& this.gold - this.goldReserve >= Constants.BOMBER_SHIP_COST) {
+				launchAttack(BomberShip.class);
+			} else if (this.gold - this.goldReserve >= Constants.SMALL_SHIP_COST) {
+				launchAttack(SmallShip.class);
+			}
+			if (this.random.nextInt((int) Constants.GOLD_RESERVE_RATE) == 0) {
+				this.goldReserve++;
+			}
+			if (this.random.nextInt((int) Constants.GOLD_RESERVE_RESET_RATE) == 0) {
+				this.goldReserve /= 2;
+			}
+		}
+	}
 
-				List<Planet> planets = Lists.newArrayList();
-				for (Entry<Planet, Integer> entry : this.revengeMeter
-						.entrySet()) {
-					if (entry.getValue() > Constants.REVENGE_LIMIT) {
-						planets.add(entry.getKey());
-					}
-				}
-
-				if (0 == planets.size()) {
-					planets = StaticAccess.getPlanets();
-					planets.remove(this);
-				}
-				int planetIndex = this.random.nextInt(planets.size());
-				this.sendAttack = true;
-				this.attackTarget = planets.get(planetIndex);
+	private void launchAttack(Class<? extends Ship> clazz) {
+		List<Planet> planets = Lists.newArrayList();
+		for (Entry<Planet, Integer> entry : this.revengeMeter.entrySet()) {
+			if (entry.getValue() > Constants.REVENGE_LIMIT) {
+				planets.add(entry.getKey());
 			}
 		}
 
+		if (0 == planets.size()) {
+			planets = StaticAccess.getPlanets();
+			planets.remove(this);
+		}
+		int planetIndex = this.random.nextInt(planets.size());
+		this.sendAttack = true;
+		this.attackTarget = planets.get(planetIndex);
+		this.shipType = clazz;
 	}
 
 	public boolean getSendAttack() {
@@ -150,9 +163,14 @@ public class Planet implements Drawable, Destructable, Updatable {
 		return this.attackTarget;
 	}
 
+	public Class<? extends Ship> getShipType() {
+		return this.shipType;
+	}
+
 	public void confirmAttack() {
 		this.attackTarget = null;
 		this.sendAttack = false;
+		this.shipType = null;
 		this.gold -= Constants.SMALL_SHIP_COST;
 	}
 
@@ -160,5 +178,4 @@ public class Planet implements Drawable, Destructable, Updatable {
 	public boolean getDead() {
 		return this.currentHealth <= 0;
 	}
-
 }

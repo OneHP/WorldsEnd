@@ -16,4 +16,7 @@ public class Constants {
 	public static float ENGAGEMENT_RATE = 0.2f;
 	public static float ENGAGEMENT_DISTANCE = 0.8f;
 	public static float REVENGE_LIMIT = 20;
+	public static float GOLD_RESERVE_RATE = ACTION_RATE * 5;
+	public static float GOLD_RESERVE_RESET_RATE = ACTION_RATE * 60;
+	public static float BOMBER_PREFERENCE_RATE = 7;
 }
