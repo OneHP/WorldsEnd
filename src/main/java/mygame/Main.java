@@ -19,6 +19,8 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 
 import display.HealthBar;
+import display.Menu;
+import display.MenuItem;
 import domain.Destructable;
 import domain.Planet;
 import domain.SmallShip;
@@ -36,6 +38,8 @@ public class Main extends SimpleApplication {
 
 	private BitmapText score;
 	private BitmapText gold;
+
+	private List<BitmapText> menuText;
 
 	public static void main(String[] args) {
 		Main app = new Main();
@@ -81,6 +85,7 @@ public class Main extends SimpleApplication {
 		this.rootNode.attachChild(this.score);
 		this.rootNode.attachChild(this.gold);
 
+		displayMenu();
 	}
 
 	@Override
@@ -129,6 +134,31 @@ public class Main extends SimpleApplication {
 
 		updateShips(tpf);
 		updatePlanets(tpf);
+	}
+
+	private void displayMenu() {
+		this.menuText = Lists.newArrayList();
+		Menu menu = new Menu();
+		MenuItem root = menu.getRoot();
+		this.menuText.add(menuText(root, 0, 0));
+		for (int i = 0; i < root.getSubMenu().size(); i++) {
+			this.menuText.add(menuText(root.getSubMenu().get(i), 1, 1 + i));
+		}
+		for (BitmapText text : this.menuText) {
+			this.rootNode.attachChild(text);
+		}
+	}
+
+	private BitmapText menuText(MenuItem menuItem, int depth, int bredth) {
+		BitmapFont font = this.assetManager
+				.loadFont("Interface/Fonts/Default.fnt");
+		BitmapText text = new BitmapText(font, false);
+		text.setText(menuItem.getItem());
+		text.setSize(Constants.GUI_FONT_SIZE);
+		text.setColor(new ColorRGBA(1.0f, 1.0f, 1.0f, 0.5f));
+		text.setLocalTranslation(new Vector3f(-72.5f + (depth * 2),
+				40 - (bredth * 2), 0));
+		return text;
 	}
 
 	private void updatePlanets(float tpf) {
