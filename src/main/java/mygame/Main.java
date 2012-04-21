@@ -96,8 +96,10 @@ public class Main extends SimpleApplication {
 			ship.update(tpf);
 			if (ship.getTargetHit()) {
 				int currentHealth = ship.getCurrentHealth();
-				ship.getTarget().takeDamage(currentHealth);
-				ship.getOwner().scoreDamage(currentHealth);
+				Planet owner = ship.getOwner();
+				Planet target = ship.getTarget();
+				target.takeDamage(currentHealth, owner);
+				owner.scoreDamage(currentHealth, target);
 				deadShips.add(ship);
 			}
 		}

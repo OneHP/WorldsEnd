@@ -89,12 +89,12 @@ public class SmallShip implements Drawable, Destructable, Updatable {
 	}
 
 	@Override
-	public void takeDamage(int damage) {
+	public void takeDamage(int damage, Planet source) {
 		this.currentHealth -= damage;
 	}
 
 	public Planet getOwner() {
-		return owner;
+		return this.owner;
 	}
 
 }

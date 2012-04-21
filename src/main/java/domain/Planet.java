@@ -1,8 +1,11 @@
 package domain;
 
+import java.util.Map;
+
 import util.Constants;
 import util.ManagerAccess;
 
+import com.google.common.collect.Maps;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -20,6 +23,7 @@ public class Planet implements Drawable, Destructable {
 	private final Geometry geometry;
 	private int gold = 10;
 	private int score = 0;
+	private final Map<Planet, Integer> revengeMeter;
 
 	public Planet(Vector3f location, float size) {
 		this.maxHealth = 100;
@@ -30,6 +34,7 @@ public class Planet implements Drawable, Destructable {
 		this.geometry.setMaterial(getMaterial());
 		this.geometry.rotate(FastMath.HALF_PI, 0, 0);
 		this.geometry.setLocalTranslation(location);
+		this.revengeMeter = Maps.newHashMap();
 	}
 
 	@Override
@@ -70,13 +75,23 @@ public class Planet implements Drawable, Destructable {
 	}
 
 	@Override
-	public void takeDamage(int damage) {
+	public void takeDamage(int damage, Planet source) {
 		this.currentHealth -= damage;
+		if (this.revengeMeter.containsKey(source)) {
+			this.revengeMeter.put(source, this.revengeMeter.get(source)
+					+ damage);
+		} else {
+			this.revengeMeter.put(source, damage);
+		}
 	}
 
-	public void scoreDamage(int damage) {
+	public void scoreDamage(int damage, Planet target) {
 		this.gold += damage;
 		this.score += damage;
+		if (this.revengeMeter.containsKey(target)) {
+			this.revengeMeter.put(target, this.revengeMeter.get(target)
+					- damage);
+		}
 	}
 
 	public int getGold() {
