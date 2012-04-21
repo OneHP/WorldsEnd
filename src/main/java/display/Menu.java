@@ -7,14 +7,16 @@ import com.google.common.collect.Lists;
 public class Menu {
 
 	private MenuItem root;
+	private boolean launchAttack;
 
 	public Menu() {
 
 		List<MenuItem> empty = Lists.newArrayList();
 
-		MenuItem item1_1 = new MenuItem("Item 1 - 1", empty) {
+		MenuItem item1_1 = new MenuItem("Small Ship", empty) {
 			@Override
 			public boolean action() {
+				Menu.this.launchAttack = true;
 				return true;
 			}
 		};
@@ -78,6 +80,10 @@ public class Menu {
 
 	public MenuItem getRoot() {
 		return this.root;
+	}
+
+	public boolean getLaunchAttack() {
+		return this.launchAttack;
 	}
 
 }

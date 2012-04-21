@@ -158,6 +158,14 @@ public class Main extends SimpleApplication {
 				if (Main.this.menuDisplayed) {
 					removeMenu();
 					if (Main.this.menu.getRoot().action()) {
+						if (Main.this.menu.getLaunchAttack()) {
+							SmallShip smallShip = new SmallShip(
+									Main.this.homePlanet,
+									Main.this.planets.get(0),
+									Main.this.homePlanet.getLocation());
+							Main.this.ships.add(smallShip);
+							Main.this.rootNode.attachChild(smallShip.getView());
+						}
 						Main.this.menuDisplayed = false;
 					} else {
 						drawMenu();
@@ -203,12 +211,12 @@ public class Main extends SimpleApplication {
 	private void drawMenu() {
 		this.menuText = Lists.newArrayList();
 		MenuItem root = this.menu.getRoot();
-		this.menuText.add(menuText(root, false, 0, 0));
 		List<MenuItem> subMenu = root.getSubMenu();
+		this.menuText.add(menuText(root, false, 0, 0, subMenu.size() < 1));
 		for (int i = 0; i < subMenu.size(); i++) {
 			MenuItem menuItem = subMenu.get(i);
 			this.menuText.add(menuText(menuItem,
-					menuItem == root.getSelectedItem(), 1, 1 + i));
+					menuItem == root.getSelectedItem(), 1, 1 + i, false));
 		}
 		for (BitmapText text : this.menuText) {
 			this.rootNode.attachChild(text);
@@ -222,11 +230,11 @@ public class Main extends SimpleApplication {
 	}
 
 	private BitmapText menuText(MenuItem menuItem, boolean selected, int depth,
-			int bredth) {
+			int bredth, boolean leaf) {
 		BitmapFont font = this.assetManager
 				.loadFont("Interface/Fonts/Default.fnt");
 		BitmapText text = new BitmapText(font, false);
-		text.setText(menuItem.getItem());
+		text.setText(menuItem.getItem() + (leaf ? " - Confirm?" : ""));
 		text.setSize(Constants.GUI_FONT_SIZE);
 		text.setColor(new ColorRGBA(selected ? 0.0f : 1.0f, 1.0f,
 				selected ? 0.0f : 1.0f, 0.5f));
