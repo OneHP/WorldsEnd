@@ -143,4 +143,9 @@ public class Planet implements Drawable, Destructable, Updatable {
 		this.gold -= Constants.SMALL_SHIP_COST;
 	}
 
+	@Override
+	public boolean getDead() {
+		return this.currentHealth <= 0;
+	}
+
 }

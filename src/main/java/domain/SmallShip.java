@@ -97,4 +97,8 @@ public class SmallShip implements Drawable, Destructable, Updatable {
 		return this.owner;
 	}
 
+	@Override
+	public boolean getDead() {
+		return this.currentHealth <= 0;
+	}
 }

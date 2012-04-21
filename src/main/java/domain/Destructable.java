@@ -15,4 +15,6 @@ public interface Destructable {
 	int getCurrentHealth();
 
 	void takeDamage(int damage, Planet source);
+
+	boolean getDead();
 }

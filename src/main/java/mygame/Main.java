@@ -1,11 +1,15 @@
 package mygame;
 
 import java.util.List;
+import java.util.Set;
 
 import util.Constants;
 import util.StaticAccess;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.jme3.app.SimpleApplication;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
@@ -26,7 +30,8 @@ public class Main extends SimpleApplication {
 	private List<Geometry> display;
 	private Planet homePlanet;
 
-	private float limiter = 0.0f;
+	private float displayLimiter = 0.0f;
+	private float battleLimiter = 0.0f;
 	private float goldTimer = 0.0f;
 
 	private BitmapText score;
@@ -90,10 +95,36 @@ public class Main extends SimpleApplication {
 			this.homePlanet.goldTick();
 		}
 
-		this.limiter += tpf;
-		if (this.limiter > 0.1f) {
-			this.limiter = 0.0f;
+		this.displayLimiter += tpf;
+		if (this.displayLimiter > 0.1f) {
+			this.displayLimiter = 0.0f;
 			redrawDisplay();
+		}
+
+		this.battleLimiter += tpf;
+		if (this.battleLimiter > Constants.ENGAGEMENT_RATE) {
+			this.battleLimiter = 0.0f;
+			for (final SmallShip ship : this.ships) {
+				List<SmallShip> otherShips = Lists.newArrayList(Iterables
+						.filter(this.ships, new Predicate<SmallShip>() {
+							@Override
+							public boolean apply(SmallShip input) {
+								return (input.getOwner() != ship.getOwner())
+										&& input.getLocation().distance(
+												ship.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
+							}
+						}));
+				for (SmallShip otherShip : otherShips) {
+					otherShip.takeDamage(1, ship.getOwner());
+				}
+			}
+			Set<SmallShip> deadShips = Sets.newHashSet();
+			for (SmallShip ship : this.ships) {
+				if (ship.getDead()) {
+					deadShips.add(ship);
+				}
+			}
+			removeDeadShips(deadShips);
 		}
 
 		updateShips(tpf);
@@ -114,7 +145,7 @@ public class Main extends SimpleApplication {
 	}
 
 	private void updateShips(float tpf) {
-		List<SmallShip> deadShips = Lists.newArrayList();
+		Set<SmallShip> deadShips = Sets.newHashSet();
 
 		for (SmallShip ship : this.ships) {
 			ship.update(tpf);
@@ -128,6 +159,10 @@ public class Main extends SimpleApplication {
 			}
 		}
 
+		removeDeadShips(deadShips);
+	}
+
+	private void removeDeadShips(Set<SmallShip> deadShips) {
 		for (SmallShip ship : deadShips) {
 			this.rootNode.detachChild(ship.getView());
 		}
