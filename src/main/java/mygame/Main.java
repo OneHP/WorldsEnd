@@ -66,7 +66,7 @@ public class Main extends SimpleApplication {
 		Planet enemyPlanet1 = new Planet(new Vector3f(40, 15, 0), 8);
 		Planet enemyPlanet2 = new Planet(new Vector3f(-10, 30, 0), 7);
 		Planet enemyPlanet3 = new Planet(new Vector3f(40, -40, 0), 9);
-		Planet enemyPlanet4 = new Planet(new Vector3f(-30, -10, 0), 5);
+		Planet enemyPlanet4 = new Planet(new Vector3f(-20, -20, 0), 5);
 		Planet enemyPlanet5 = new Planet(new Vector3f(-55, 20, 0), 8);
 
 		this.planets = Lists.newArrayList(enemyPlanet1, enemyPlanet2,
@@ -124,17 +124,19 @@ public class Main extends SimpleApplication {
 			List<Ship> engagedShips = getShipsWithinEngagementRange();
 
 			for (final Ship ship : engagedShips) {
-				List<Ship> otherShips = Lists.newArrayList(Iterables.filter(
-						engagedShips, new Predicate<Ship>() {
-							@Override
-							public boolean apply(Ship input) {
-								return (input.getOwner() != ship.getOwner())
-										&& input.getLocation().distance(
-												ship.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
-							}
-						}));
-				for (Ship otherShip : otherShips) {
-					otherShip.takeDamage(1, ship.getOwner());
+				if (!(ship instanceof BomberShip)) {
+					List<Ship> otherShips = Lists.newArrayList(Iterables
+							.filter(engagedShips, new Predicate<Ship>() {
+								@Override
+								public boolean apply(Ship input) {
+									return (input.getOwner() != ship.getOwner())
+											&& input.getLocation().distance(
+													ship.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
+								}
+							}));
+					for (Ship otherShip : otherShips) {
+						otherShip.takeDamage(1, ship.getOwner());
+					}
 				}
 			}
 			Set<Ship> deadShips = Sets.newHashSet();
