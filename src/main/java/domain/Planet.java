@@ -102,4 +102,8 @@ public class Planet implements Drawable, Destructable {
 		return this.score;
 	}
 
+	public void goldTick() {
+		this.gold++;
+	}
+
 }

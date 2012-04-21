@@ -27,6 +27,7 @@ public class Main extends SimpleApplication {
 	private Planet homePlanet;
 
 	private float limiter = 0.0f;
+	private float goldTimer = 0.0f;
 
 	private BitmapText score;
 	private BitmapText gold;
@@ -84,6 +85,16 @@ public class Main extends SimpleApplication {
 
 	@Override
 	public void simpleUpdate(float tpf) {
+
+		this.goldTimer += tpf;
+		if (this.goldTimer > Constants.GOLD_SPEED) {
+			this.goldTimer = 0.0f;
+			for (Planet planet : this.planets) {
+				planet.goldTick();
+			}
+			this.homePlanet.goldTick();
+		}
+
 		this.limiter += tpf;
 		if (this.limiter > 0.1f) {
 			this.limiter = 0.0f;
