@@ -159,12 +159,7 @@ public class Main extends SimpleApplication {
 					removeMenu();
 					if (Main.this.menu.getRoot().action()) {
 						if (Main.this.menu.getLaunchAttack()) {
-							SmallShip smallShip = new SmallShip(
-									Main.this.homePlanet,
-									Main.this.planets.get(0),
-									Main.this.homePlanet.getLocation());
-							Main.this.ships.add(smallShip);
-							Main.this.rootNode.attachChild(smallShip.getView());
+							launchAttack();
 						}
 						Main.this.menuDisplayed = false;
 					} else {
@@ -199,6 +194,15 @@ public class Main extends SimpleApplication {
 					drawMenu();
 				}
 			}
+		}
+
+		private void launchAttack() {
+			SmallShip smallShip = new SmallShip(
+					Main.this.homePlanet,
+					Main.this.menu.getTarget(),
+					Main.this.homePlanet.getLocation());
+			Main.this.ships.add(smallShip);
+			Main.this.rootNode.attachChild(smallShip.getView());
 		}
 	};
 

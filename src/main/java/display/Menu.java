@@ -2,54 +2,53 @@ package display;
 
 import java.util.List;
 
+import util.StaticAccess;
+
 import com.google.common.collect.Lists;
+
+import domain.Planet;
 
 public class Menu {
 
 	private MenuItem root;
 	private boolean launchAttack;
+	private Planet target;
 
 	public Menu() {
 
 		List<MenuItem> empty = Lists.newArrayList();
 
-		MenuItem item1_1 = new MenuItem("Small Ship", empty) {
-			@Override
-			public boolean action() {
-				Menu.this.launchAttack = true;
-				return true;
-			}
-		};
-		MenuItem item1_2 = new MenuItem("Item 1 - 2", empty) {
-			@Override
-			public boolean action() {
-				return true;
-			}
-		};
+		List<Planet> planets = StaticAccess.getPlanets();
+		List<MenuItem> planetsMenuItems = Lists.newArrayList();
+		for (final Planet planet : planets) {
+			planetsMenuItems.add(new MenuItem(planet.toString(), empty) {
+				@Override
+				public boolean action() {
+					Menu.this.target = planet;
+					Menu.this.launchAttack = true;
+					return true;
+				}
+			});
+		}
 
-		MenuItem item1 = new MenuItem("Send Ship", Lists.newArrayList(item1_1,
-				item1_2)) {
+		MenuItem smallShip = new MenuItem("Small Ship", planetsMenuItems) {
 			@Override
 			public boolean action() {
 				Menu.this.root = getSelectedItem();
 				return false;
 			}
 		};
-		MenuItem item2 = new MenuItem("Item 2", empty) {
+
+		MenuItem sendShip = new MenuItem("Send Ship",
+				Lists.newArrayList(smallShip)) {
 			@Override
 			public boolean action() {
-				return true;
-			}
-		};
-		MenuItem item3 = new MenuItem("Item 3", empty) {
-			@Override
-			public boolean action() {
-				return true;
+				Menu.this.root = getSelectedItem();
+				return false;
 			}
 		};
 
-		this.root = new MenuItem("Main",
-				Lists.newArrayList(item1, item2, item3)) {
+		this.root = new MenuItem("Main", Lists.newArrayList(sendShip)) {
 			@Override
 			public boolean action() {
 				Menu.this.root = getSelectedItem();
@@ -86,4 +85,7 @@ public class Menu {
 		return this.launchAttack;
 	}
 
+	public Planet getTarget() {
+		return this.target;
+	}
 }
