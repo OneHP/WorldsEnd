@@ -7,10 +7,10 @@ import com.jme3.scene.Geometry;
 
 public abstract class AbstractShip implements Ship {
 
-	private final int maxHealth;
-	private int currentHealth;
+	private int maxHealth = 0;
+	private int currentHealth = 0;
 	private final Vector3f location;
-	private Geometry geometry;
+	private Geometry geometry = null;
 	private final Planet owner;
 	private final Planet target;
 	private boolean targetHit = false;
@@ -18,10 +18,7 @@ public abstract class AbstractShip implements Ship {
 	public AbstractShip(Planet owner, Planet target, Vector3f location) {
 		this.owner = owner;
 		this.target = target;
-		this.maxHealth = 10;
-		this.currentHealth = 10;
 		this.location = location;
-		this.geometry = null;
 	}
 
 	@Override
@@ -69,12 +66,17 @@ public abstract class AbstractShip implements Ship {
 		return this.target;
 	}
 
-	public void setGeometry(Geometry geometry) {
+	public void initGeometry(Geometry geometry) {
 		this.geometry = geometry;
 	}
 
 	public void setTargetHit(boolean targetHit) {
 		this.targetHit = targetHit;
+	}
+
+	public void initHealth(int health) {
+		this.maxHealth = health;
+		this.currentHealth = health;
 	}
 
 	@Override

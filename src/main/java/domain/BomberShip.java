@@ -1,6 +1,6 @@
 package domain;
 
-import meshes.SmallShipMesh;
+import meshes.BomberShipMesh;
 import util.Constants;
 import util.StaticAccess;
 
@@ -9,15 +9,15 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 
-public class SmallShip extends AbstractShip {
+public class BomberShip extends AbstractShip {
 
-	public SmallShip(Planet owner, Planet target, Vector3f location) {
+	public BomberShip(Planet owner, Planet target, Vector3f location) {
 		super(owner, target, location);
-		Geometry geo = new Geometry("smallShip", new SmallShipMesh());
+		Geometry geo = new Geometry("bomberShip", new BomberShipMesh());
 		geo.setMaterial(getMaterial());
 		geo.setLocalTranslation(location);
 		super.initGeometry(geo);
-		super.initHealth(Constants.SMALL_SHIP_HEALTH);
+		super.initHealth(Constants.BOMBER_SHIP_HEALTH);
 	}
 
 	private Material getMaterial() {
@@ -44,4 +44,5 @@ public class SmallShip extends AbstractShip {
 			setTargetHit(true);
 		}
 	}
+
 }
