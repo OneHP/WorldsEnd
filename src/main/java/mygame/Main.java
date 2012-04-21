@@ -114,9 +114,12 @@ public class Main extends SimpleApplication {
 		this.battleLimiter += tpf;
 		if (this.battleLimiter > Constants.ENGAGEMENT_RATE) {
 			this.battleLimiter = 0.0f;
-			for (final SmallShip ship : this.ships) {
+
+			List<SmallShip> engagedShips = getShipsWithinEngagementRange();
+
+			for (final SmallShip ship : engagedShips) {
 				List<SmallShip> otherShips = Lists.newArrayList(Iterables
-						.filter(this.ships, new Predicate<SmallShip>() {
+						.filter(engagedShips, new Predicate<SmallShip>() {
 							@Override
 							public boolean apply(SmallShip input) {
 								return (input.getOwner() != ship.getOwner())
@@ -139,6 +142,26 @@ public class Main extends SimpleApplication {
 
 		updateShips(tpf);
 		updatePlanets(tpf);
+	}
+
+	private List<SmallShip> getShipsWithinEngagementRange() {
+		List<SmallShip> engagedShips = Lists.newArrayList(Iterables.filter(
+				this.ships, new Predicate<SmallShip>() {
+					@Override
+					public boolean apply(final SmallShip outer) {
+						return Iterables.any(Main.this.ships,
+								new Predicate<SmallShip>() {
+									@Override
+									public boolean apply(SmallShip inner) {
+										return inner
+												.getLocation()
+												.distance(
+														outer.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
+									}
+								});
+					}
+				}));
+		return engagedShips;
 	}
 
 	private void initKeys() {
@@ -242,8 +265,8 @@ public class Main extends SimpleApplication {
 		BitmapText text = new BitmapText(font, false);
 		text.setText(menuItem.getItem() + (leaf ? " - Confirm?" : ""));
 		text.setSize(Constants.GUI_FONT_SIZE);
-		text.setColor(new ColorRGBA(selected ? 0.0f : 1.0f, 1.0f,
-				selected ? 0.0f : 1.0f, 0.5f));
+		text.setColor(new ColorRGBA(selected || leaf ? 0.0f : 1.0f, 1.0f,
+				selected || leaf ? 0.0f : 1.0f, 0.5f));
 		text.setLocalTranslation(new Vector3f(-72.5f + (depth * 2),
 				40 - (bredth * 2), 0));
 		return text;
