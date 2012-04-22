@@ -32,7 +32,8 @@ public class Constants {
 	public static float ENGAGEMENT_RATE = 0.2f;
 	public static float ENGAGEMENT_DISTANCE = SHIP_SPEED_MULTIPLIER * 0.8f;
 
-	public static float REVENGE_LIMIT = 20;
+	public static float REVENGE_LIMIT = 29;
+	public static int HOME_PLANET_ATTACK_RATE = 20;
 
 	public static float GOLD_RESERVE_RATE = ACTION_RATE * 5;
 	public static float GOLD_RESERVE_RESET_RATE = ACTION_RATE * 30;

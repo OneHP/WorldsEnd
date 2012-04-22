@@ -146,6 +146,14 @@ public class Planet implements Drawable, Destructable, Updatable {
 	}
 
 	private void launchAttack(Class<? extends Ship> clazz) {
+
+		this.sendAttack = true;
+		this.shipType = clazz;
+		if (this.random.nextInt(Constants.HOME_PLANET_ATTACK_RATE) == 1) {
+			this.attackTarget = StaticAccess.getHomePlanet();
+			return;
+		}
+
 		List<Planet> planets = Lists.newArrayList();
 		for (Entry<Planet, Integer> entry : this.revengeMeter.entrySet()) {
 			if (entry.getValue() > Constants.REVENGE_LIMIT
@@ -160,15 +168,11 @@ public class Planet implements Drawable, Destructable, Updatable {
 			planets.remove(this);
 		}
 		if (planets.isEmpty()) {
-			this.sendAttack = true;
 			this.attackTarget = StaticAccess.getHomePlanet();
-			this.shipType = clazz;
-		} else {
-			int planetIndex = this.random.nextInt(planets.size());
-			this.sendAttack = true;
-			this.attackTarget = planets.get(planetIndex);
-			this.shipType = clazz;
+			return;
 		}
+		int planetIndex = this.random.nextInt(planets.size());
+		this.attackTarget = planets.get(planetIndex);
 	}
 
 	public boolean getSendAttack() {
