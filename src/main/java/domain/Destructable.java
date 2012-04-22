@@ -2,6 +2,8 @@ package domain;
 
 import com.jme3.math.Vector3f;
 
+import display.HealthBar;
+
 public interface Destructable {
 
 	float getHealthBarSize();
@@ -17,4 +19,8 @@ public interface Destructable {
 	void takeDamage(int damage, Planet source);
 
 	boolean getDead();
+
+	void setHealthBar(HealthBar healthBar);
+
+	HealthBar getHealthBar();
 }

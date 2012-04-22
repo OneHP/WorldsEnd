@@ -36,6 +36,13 @@ public class SmallShip extends AbstractShip {
 		Vector3f targetHeading = this.getTarget().getLocation().subtract(this.getLocation()).normalize();
 		Vector3f movement = targetHeading.mult(tpf * Constants.SMALL_SHIP_SPEED);
 		getView().move(movement);
+		try {
+			for (Geometry geometry : getHealthBar().getParts()) {
+				geometry.move(movement);
+			}
+		} catch (NullPointerException e) {
+			// Do nothing
+		}
 		if (this.getLocation().distance(this.getTarget().getLocation()) < this.getTarget().getSize()) {
 			setTargetHit(true);
 		}

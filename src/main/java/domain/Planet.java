@@ -17,6 +17,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 
+import display.HealthBar;
 import drawing.Circle;
 
 public class Planet implements Drawable, Destructable, Updatable {
@@ -38,6 +39,7 @@ public class Planet implements Drawable, Destructable, Updatable {
 	private int goldReserve = 0;
 	private final String name;
 	private BitmapText nameTag = null;
+	private HealthBar healthBar;
 
 	public Planet(Vector3f location, float size) {
 		this.maxHealth = 200;
@@ -226,5 +228,16 @@ public class Planet implements Drawable, Destructable, Updatable {
 
 	public void setNameTag(BitmapText nameTag) {
 		this.nameTag = nameTag;
+	}
+
+	@Override
+	public void setHealthBar(HealthBar healthBar) {
+		this.healthBar = healthBar;
+
+	}
+
+	@Override
+	public HealthBar getHealthBar() {
+		return this.healthBar;
 	}
 }

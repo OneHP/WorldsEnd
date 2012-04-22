@@ -5,6 +5,8 @@ import util.Constants;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 
+import display.HealthBar;
+
 public abstract class AbstractShip implements Ship {
 
 	private int maxHealth = 0;
@@ -14,6 +16,7 @@ public abstract class AbstractShip implements Ship {
 	private final Planet owner;
 	private final Planet target;
 	private boolean targetHit = false;
+	private HealthBar healthBar;
 
 	public AbstractShip(Planet owner, Planet target, Vector3f location) {
 		this.owner = owner;
@@ -82,6 +85,17 @@ public abstract class AbstractShip implements Ship {
 	@Override
 	public float getHealthBarSize() {
 		return Constants.SHIP_HEALTH_BAR_SIZE;
+	}
+
+	@Override
+	public void setHealthBar(HealthBar healthBar) {
+		this.healthBar = healthBar;
+
+	}
+
+	@Override
+	public HealthBar getHealthBar() {
+		return this.healthBar;
 	}
 
 }

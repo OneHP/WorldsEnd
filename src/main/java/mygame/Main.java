@@ -218,7 +218,7 @@ public class Main extends SimpleApplication {
 		distributeGold(tpf);
 
 		this.displayLimiter += tpf;
-		if (this.displayLimiter > 0.1f) {
+		if (this.displayLimiter > 0.5f) {
 			this.displayLimiter = 0.0f;
 			redrawDisplay();
 		}
@@ -538,7 +538,9 @@ public class Main extends SimpleApplication {
 	}
 
 	private void drawDestructableDisplay(Destructable destructable) {
-		for (Geometry geometry : new HealthBar(destructable).getParts()) {
+		HealthBar healthBar = new HealthBar(destructable);
+		destructable.setHealthBar(healthBar);
+		for (Geometry geometry : healthBar.getParts()) {
 			this.display.add(geometry);
 			this.rootNode.attachChild(geometry);
 		}
