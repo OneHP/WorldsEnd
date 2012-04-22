@@ -1,6 +1,6 @@
 package domain;
 
-import meshes.BomberShipMesh;
+import meshes.DestroyerShipMesh;
 import util.Constants;
 import util.StaticAccess;
 
@@ -9,21 +9,26 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 
-public class BomberShip extends AbstractShip {
+public class DestroyerShip extends AbstractShip {
 
-	public BomberShip(Planet owner, Planet target, Vector3f location) {
+	public DestroyerShip(Planet owner, Planet target, Vector3f location) {
 		super(owner, target, location);
-		Geometry geo = new Geometry("bomberShip", new BomberShipMesh());
+		Geometry geo = new Geometry("destShip", new DestroyerShipMesh());
 		geo.setMaterial(getMaterial());
 		geo.setLocalTranslation(location);
 		super.initGeometry(geo);
-		super.initHealth(Constants.BOMBER_SHIP_HEALTH);
+		super.initHealth(Constants.DESTROYER_SHIP_HEALTH);
 	}
 
 	private Material getMaterial() {
 		Material material = new Material(StaticAccess.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 		material.setColor("Color", ColorRGBA.White);
 		return material;
+	}
+
+	@Override
+	public int getCost() {
+		return Constants.DESTROYER_SHIP_COST;
 	}
 
 	@Override
@@ -34,7 +39,7 @@ public class BomberShip extends AbstractShip {
 	@Override
 	public void update(float tpf) {
 		Vector3f targetHeading = this.getTarget().getLocation().subtract(this.getLocation()).normalize();
-		Vector3f movement = targetHeading.mult(tpf * Constants.BOMBER_SHIP_SPEED);
+		Vector3f movement = targetHeading.mult(tpf * Constants.DESTROYER_SHIP_SPEED);
 		getView().move(movement);
 		if (this.getLocation().distance(this.getTarget().getLocation()) < this.getTarget().getSize()) {
 			setTargetHit(true);
@@ -42,18 +47,8 @@ public class BomberShip extends AbstractShip {
 	}
 
 	@Override
-	public int getCost() {
-		return Constants.BOMBER_SHIP_COST;
-	}
-
-	@Override
-	public void takeDamage(int damage, Planet source) {
-		super.takeDamage(damage * Constants.BOMBER_DAMAGE_MULTIPLIER, source);
-	}
-
-	@Override
 	public int getLaserDamage() {
-		return 0;
+		return 2;
 	}
 
 }

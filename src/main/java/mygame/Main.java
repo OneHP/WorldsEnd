@@ -26,6 +26,7 @@ import display.HealthBar;
 import display.Menu;
 import display.MenuItem;
 import domain.BomberShip;
+import domain.DestroyerShip;
 import domain.Destructable;
 import domain.Planet;
 import domain.Ship;
@@ -148,7 +149,7 @@ public class Main extends SimpleApplication {
 						}
 					}));
 					for (Ship otherShip : otherShips) {
-						otherShip.takeDamage(1, ship.getOwner());
+						otherShip.takeDamage(ship.getLaserDamage(), ship.getOwner());
 						this.laser.play();
 					}
 				}
@@ -160,6 +161,8 @@ public class Main extends SimpleApplication {
 					if (ship instanceof SmallShip) {
 						this.smallDeath.play();
 					} else if (ship instanceof BomberShip) {
+						this.bomberDeath.play();
+					} else if (ship instanceof DestroyerShip) {
 						this.bomberDeath.play();
 					}
 				}
@@ -290,6 +293,9 @@ public class Main extends SimpleApplication {
 				} else if (clazz == BomberShip.class) {
 					ship = new BomberShip(Main.this.homePlanet, Main.this.menu.getTarget(),
 							Main.this.homePlanet.getLocation());
+				} else if (clazz == DestroyerShip.class) {
+					ship = new DestroyerShip(Main.this.homePlanet, Main.this.menu.getTarget(),
+							Main.this.homePlanet.getLocation());
 				}
 				Main.this.launchQueue.add(ship);
 			}
@@ -342,6 +348,8 @@ public class Main extends SimpleApplication {
 					ship = new SmallShip(planet, planet.getAttackTarget(), planet.getLocation());
 				} else if (clazz == BomberShip.class) {
 					ship = new BomberShip(planet, planet.getAttackTarget(), planet.getLocation());
+				} else if (clazz == DestroyerShip.class) {
+					ship = new DestroyerShip(planet, planet.getAttackTarget(), planet.getLocation());
 				}
 				this.ships.add(ship);
 				this.rootNode.attachChild(ship.getView());
@@ -380,10 +388,12 @@ public class Main extends SimpleApplication {
 				int currentHealth = ship.getCurrentHealth();
 				Planet owner = ship.getOwner();
 				Planet target = ship.getTarget();
-				target.takeDamage(currentHealth, owner);
-				owner.scoreDamage(currentHealth, target);
+				if (!(ship instanceof DestroyerShip)) {
+					target.takeDamage(currentHealth, owner);
+					owner.scoreDamage(currentHealth, target);
+					this.planetHit.play();
+				}
 				deadShips.add(ship);
-				this.planetHit.play();
 			}
 		}
 

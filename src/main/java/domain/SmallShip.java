@@ -21,8 +21,7 @@ public class SmallShip extends AbstractShip {
 	}
 
 	private Material getMaterial() {
-		Material material = new Material(StaticAccess.getAssetManager(),
-				"Common/MatDefs/Misc/Unshaded.j3md");
+		Material material = new Material(StaticAccess.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 		material.setColor("Color", ColorRGBA.White);
 		return material;
 	}
@@ -34,13 +33,10 @@ public class SmallShip extends AbstractShip {
 
 	@Override
 	public void update(float tpf) {
-		Vector3f targetHeading = this.getTarget().getLocation()
-				.subtract(this.getLocation()).normalize();
-		Vector3f movement = targetHeading
-				.mult(tpf * Constants.SMALL_SHIP_SPEED);
+		Vector3f targetHeading = this.getTarget().getLocation().subtract(this.getLocation()).normalize();
+		Vector3f movement = targetHeading.mult(tpf * Constants.SMALL_SHIP_SPEED);
 		getView().move(movement);
-		if (this.getLocation().distance(this.getTarget().getLocation()) < this
-				.getTarget().getSize()) {
+		if (this.getLocation().distance(this.getTarget().getLocation()) < this.getTarget().getSize()) {
 			setTargetHit(true);
 		}
 	}
@@ -48,5 +44,10 @@ public class SmallShip extends AbstractShip {
 	@Override
 	public int getCost() {
 		return Constants.SMALL_SHIP_COST;
+	}
+
+	@Override
+	public int getLaserDamage() {
+		return 1;
 	}
 }

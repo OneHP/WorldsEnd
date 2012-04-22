@@ -119,7 +119,11 @@ public class Planet implements Drawable, Destructable, Updatable {
 		this.actionLimiter += tpf;
 		if (this.actionLimiter > Constants.ACTION_RATE) {
 			this.actionLimiter = 0.0f;
-			if (this.random.nextInt((int) Constants.BOMBER_PREFERENCE_RATE) == 1
+
+			if (this.random.nextInt((int) Constants.DESTROYER_PREFERENCE_RATE) == 1
+					&& this.gold >= Constants.DESTROYER_SHIP_COST) {
+				launchAttack(DestroyerShip.class);
+			} else if (this.random.nextInt((int) Constants.BOMBER_PREFERENCE_RATE) == 1
 					&& this.gold >= Constants.BOMBER_SHIP_COST) {
 				launchAttack(BomberShip.class);
 			} else if (this.gold - this.goldReserve >= Constants.SMALL_SHIP_COST) {
