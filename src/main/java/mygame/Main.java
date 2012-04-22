@@ -34,6 +34,8 @@ import domain.SmallShip;
 
 public class Main extends SimpleApplication {
 
+	private boolean gameStopped = true;
+
 	private List<Planet> planets;
 	private List<Ship> ships;
 	private List<Geometry> display;
@@ -87,6 +89,49 @@ public class Main extends SimpleApplication {
 
 		setupWindow();
 
+		this.music.play();
+
+		setupIntro();
+	}
+
+	private void setupIntro() {
+		BitmapFont font = this.assetManager.loadFont("Interface/Fonts/Default.fnt");
+
+		BitmapText instructions = new BitmapText(font, false);
+		instructions.setSize(Constants.GUI_FONT_SIZE);
+		instructions.setColor(ColorRGBA.Green);
+		instructions.setLocalTranslation(new Vector3f(-30, 20, 0));
+
+		instructions
+				.setText("Worlds End\n\nWar rages around your tiny homeworld, but being small has its benefits.\n"
+						+ "The larger planets don't consider you much of a threat. Take advantage of this and hit them with all you've got.\n\n"
+						+ "Ship Costs:\n" + "Fighter:   7g\n" + "Bomber:    15g\n" + "Destroyer: 30g\n\n"
+						+ "Controls:\n" + "Bring up your ship launch menu with [Return]\n"
+						+ "Arrow keys to navigate the menu\n" + "Confirm with [Return]\n"
+						+ "Go back with [Backspace]\n"
+						+ "You can launch multiple ships once you've confirmed the target, press [Right Arrow]\n\n\n"
+						+ "Press [Return] to Start the Game\n");
+
+		this.rootNode.attachChild(instructions);
+
+		this.inputManager.addMapping("Start", new KeyTrigger(KeyInput.KEY_RETURN));
+		this.inputManager.addListener(this.startActionListener, new String[] { "Start" });
+	}
+
+	private final ActionListener startActionListener = new ActionListener() {
+		@Override
+		public void onAction(String name, boolean keyPressed, float tpf) {
+			if (name.equals("Start") && !keyPressed) {
+				Main.this.inputManager.clearMappings();
+				Main.this.inputManager.removeListener(Main.this.startActionListener);
+				startGame();
+			}
+		}
+	};
+
+	private void startGame() {
+		this.gameStopped = false;
+		this.rootNode.detachAllChildren();
 		this.homePlanet = new Planet(new Vector3f(0, 0, 0), 2);
 		Planet enemyPlanet1 = new Planet(new Vector3f(40, 15, 0), 8);
 		Planet enemyPlanet2 = new Planet(new Vector3f(-10, 30, 0), 7);
@@ -111,12 +156,14 @@ public class Main extends SimpleApplication {
 		setupScoreDisplay();
 
 		initKeys();
-
-		this.music.play();
 	}
 
 	@Override
 	public void simpleUpdate(float tpf) {
+
+		if (this.gameStopped) {
+			return;
+		}
 
 		this.goldTimer += tpf;
 		if (this.goldTimer > Constants.GOLD_RATE) {
