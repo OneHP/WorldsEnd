@@ -38,7 +38,7 @@ public class Menu {
 			});
 		}
 
-		MenuItem smallShip = new MenuItem("Small Ship", planetsMenuItems) {
+		MenuItem smallShip = new MenuItem("Fighter", planetsMenuItems) {
 			@Override
 			public boolean action() {
 				Menu.this.root = getSelectedItem();
@@ -47,7 +47,7 @@ public class Menu {
 			}
 		};
 
-		MenuItem bomberShip = new MenuItem("Bomber Ship", planetsMenuItems) {
+		MenuItem bomberShip = new MenuItem("Bomber", planetsMenuItems) {
 			@Override
 			public boolean action() {
 				Menu.this.root = getSelectedItem();
@@ -56,7 +56,7 @@ public class Menu {
 			}
 		};
 
-		MenuItem destroyerShip = new MenuItem("Destroyer Ship", planetsMenuItems) {
+		MenuItem destroyerShip = new MenuItem("Destroyer", planetsMenuItems) {
 			@Override
 			public boolean action() {
 				Menu.this.root = getSelectedItem();
