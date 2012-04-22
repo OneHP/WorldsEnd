@@ -183,6 +183,8 @@ public class Planet implements Drawable, Destructable, Updatable {
 			this.gold -= Constants.SMALL_SHIP_COST;
 		} else if (shipType == BomberShip.class) {
 			this.gold -= Constants.BOMBER_SHIP_COST;
+		} else if (shipType == DestroyerShip.class) {
+			this.gold -= Constants.DESTROYER_SHIP_COST;
 		}
 		this.shipType = null;
 
