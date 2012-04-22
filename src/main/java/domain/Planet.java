@@ -10,6 +10,7 @@ import util.StaticAccess;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.jme3.font.BitmapText;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -27,7 +28,7 @@ public class Planet implements Drawable, Destructable, Updatable {
 	private final float size;
 	private final Vector3f location;
 	private final Geometry geometry;
-	private int gold = 10;
+	private int gold = 29;
 	private int score = 0;
 	private final Map<Planet, Integer> revengeMeter;
 	private final Random random = new Random();
@@ -35,6 +36,8 @@ public class Planet implements Drawable, Destructable, Updatable {
 	private Planet attackTarget = null;
 	private Class<? extends Ship> shipType = null;
 	private int goldReserve = 0;
+	private final String name;
+	private BitmapText nameTag = null;
 
 	public Planet(Vector3f location, float size) {
 		this.maxHealth = 200;
@@ -46,6 +49,7 @@ public class Planet implements Drawable, Destructable, Updatable {
 		this.geometry.rotate(FastMath.HALF_PI, 0, 0);
 		this.geometry.setLocalTranslation(location);
 		this.revengeMeter = Maps.newHashMap();
+		this.name = randomName();
 	}
 
 	@Override
@@ -130,7 +134,7 @@ public class Planet implements Drawable, Destructable, Updatable {
 				launchAttack(SmallShip.class);
 			}
 			if (this.random.nextInt((int) Constants.GOLD_RESERVE_RATE) == 0) {
-				this.goldReserve++;
+				this.goldReserve += 2;
 			}
 			if (this.random.nextInt((int) Constants.GOLD_RESERVE_RESET_RATE) == 0) {
 				this.goldReserve /= 2;
@@ -193,5 +197,25 @@ public class Planet implements Drawable, Destructable, Updatable {
 	@Override
 	public boolean getDead() {
 		return this.currentHealth <= 0;
+	}
+
+	private static String[] firstPart = new String[] { "Alpha", "Beta", "Gamma", "Epsilon" };
+	private static String[] secondPart = new String[] { "Centauri", "Prime", "Arctaurus", "VII" };
+
+	private static String randomName() {
+		Random random = new Random();
+		return firstPart[random.nextInt(4)] + " " + secondPart[random.nextInt(4)];
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public BitmapText getNameTag() {
+		return this.nameTag;
+	}
+
+	public void setNameTag(BitmapText nameTag) {
+		this.nameTag = nameTag;
 	}
 }

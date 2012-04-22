@@ -28,7 +28,7 @@ public class Menu {
 		List<Planet> planets = StaticAccess.getPlanets();
 		List<MenuItem> planetsMenuItems = Lists.newArrayList();
 		for (final Planet planet : planets) {
-			planetsMenuItems.add(new MenuItem(planet.toString(), empty) {
+			planetsMenuItems.add(new MenuItem(planet.getName(), empty) {
 				@Override
 				public boolean action() {
 					Menu.this.target = planet;

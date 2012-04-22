@@ -98,22 +98,15 @@ public class Main extends SimpleApplication {
 	}
 
 	private void setupIntro() {
-		BitmapFont font = this.assetManager.loadFont("Interface/Fonts/Default.fnt");
-
-		BitmapText instructions = new BitmapText(font, false);
-		instructions.setSize(Constants.GUI_FONT_SIZE);
-		instructions.setColor(ColorRGBA.Green);
-		instructions.setLocalTranslation(new Vector3f(-30, 20, 0));
-
-		instructions
-				.setText("Worlds End\n\nWar rages around your tiny homeworld, but being small has its benefits.\n"
+		BitmapText instructions = text(
+				"Worlds End\n\nWar rages around your tiny homeworld, but being small has its benefits.\n"
 						+ "The larger planets don't consider you much of a threat. Take advantage of this and hit them with all you've got.\n\n"
 						+ "Ship Costs:\n" + "Fighter:   7g\n" + "Bomber:    15g\n" + "Destroyer: 30g\n\n"
 						+ "Controls:\n" + "Bring up your ship launch menu with [Return]\n"
 						+ "[Arrow] keys to navigate the menu\n" + "Confirm with [Return]\n"
 						+ "Go back with [Backspace]\n"
 						+ "You can launch multiple ships once you've confirmed the target, press [Right Arrow]\n\n\n"
-						+ "Press [Return] to Start the Game\n");
+						+ "Press [Return] to Start the Game\n", ColorRGBA.Green, new Vector3f(-30, 20, 0));
 
 		this.rootNode.attachChild(instructions);
 
@@ -154,6 +147,10 @@ public class Main extends SimpleApplication {
 		this.rootNode.attachChild(this.homePlanet.getView());
 		for (Planet planet : this.planets) {
 			this.rootNode.attachChild(planet.getView());
+			BitmapText nameTag = this.text(planet.getName(), ColorRGBA.Orange,
+					planet.getLocation().add(-1 * planet.getSize(), planet.getSize() * 1.5f, 0));
+			this.rootNode.attachChild(nameTag);
+			planet.setNameTag(nameTag);
 		}
 
 		setupScoreDisplay();
@@ -161,21 +158,24 @@ public class Main extends SimpleApplication {
 		initKeys();
 	}
 
+	private BitmapText text(String content, ColorRGBA colour, Vector3f position) {
+		BitmapFont font = this.assetManager.loadFont("Interface/Fonts/Default.fnt");
+		BitmapText text = new BitmapText(font, false);
+		text.setSize(Constants.GUI_FONT_SIZE);
+		text.setColor(colour);
+		text.setLocalTranslation(position);
+		text.setText(content);
+		return text;
+	}
+
 	private void endGame() {
 		this.gameStopped = true;
 		this.rootNode.detachAllChildren();
 
-		BitmapFont font = this.assetManager.loadFont("Interface/Fonts/Default.fnt");
-
-		BitmapText instructions = new BitmapText(font, false);
-		instructions.setSize(Constants.GUI_FONT_SIZE);
-		instructions.setColor(ColorRGBA.Green);
-		instructions.setLocalTranslation(new Vector3f(-30, 20, 0));
-
-		instructions.setText("Game Over\n\n"
+		BitmapText instructions = text("Game Over\n\n"
 				+ (this.homePlanet.getDead() ? "You died, but managed to score "
 						: "You are the last planet standing! You scored ") + this.homePlanet.getScore()
-				+ " points\n\n\n" + "Press [Return] to Play Again\n");
+				+ " points\n\n\n" + "Press [Return] to Play Again\n", ColorRGBA.Green, new Vector3f(-30, 20, 0));
 
 		this.rootNode.attachChild(instructions);
 
@@ -279,6 +279,7 @@ public class Main extends SimpleApplication {
 			}
 			for (Planet planet : deadPlanets) {
 				this.rootNode.detachChild(planet.getView());
+				this.rootNode.detachChild(planet.getNameTag());
 			}
 			this.planets.removeAll(deadPlanets);
 			for (Ship ship : this.ships) {
@@ -427,12 +428,9 @@ public class Main extends SimpleApplication {
 	}
 
 	private BitmapText menuText(MenuItem menuItem, boolean selected, int depth, int bredth, boolean leaf) {
-		BitmapFont font = this.assetManager.loadFont("Interface/Fonts/Default.fnt");
-		BitmapText text = new BitmapText(font, false);
-		text.setText(menuItem.getItem() + (leaf ? " x " + this.menu.getRepeatCount() : ""));
-		text.setSize(Constants.GUI_FONT_SIZE);
-		text.setColor(new ColorRGBA(selected || leaf ? 0.0f : 1.0f, 1.0f, selected || leaf ? 0.0f : 1.0f, 0.5f));
-		text.setLocalTranslation(new Vector3f(-72.5f + (depth * 2), 40 - (bredth * 2), 0));
+		BitmapText text = text(menuItem.getItem() + (leaf ? " x " + this.menu.getRepeatCount() : ""), new ColorRGBA(
+				selected || leaf ? 0.0f : 1.0f, 1.0f, selected || leaf ? 0.0f : 1.0f, 0.5f), new Vector3f(-72.5f
+				+ (depth * 2), 40 - (bredth * 2), 0));
 		return text;
 	}
 
@@ -518,8 +516,8 @@ public class Main extends SimpleApplication {
 		for (Ship ship : this.ships) {
 			drawDestructableDisplay(ship);
 		}
-		this.score.setText(String.valueOf(this.homePlanet.getScore()));
-		this.gold.setText(String.valueOf(this.homePlanet.getGold()));
+		this.score.setText(String.valueOf(this.homePlanet.getScore() + " Points"));
+		this.gold.setText(String.valueOf(this.homePlanet.getGold() + " Gold"));
 	}
 
 	private void drawDestructableDisplay(Destructable destructable) {
@@ -535,15 +533,8 @@ public class Main extends SimpleApplication {
 	}
 
 	private void setupScoreDisplay() {
-		BitmapFont font = this.assetManager.loadFont("Interface/Fonts/Default.fnt");
-		this.score = new BitmapText(font, false);
-		this.score.setSize(Constants.GUI_FONT_SIZE);
-		this.score.setColor(ColorRGBA.Green);
-		this.score.setLocalTranslation(new Vector3f(65, 40, 0));
-		this.gold = new BitmapText(font, false);
-		this.gold.setSize(Constants.GUI_FONT_SIZE);
-		this.gold.setColor(ColorRGBA.Yellow);
-		this.gold.setLocalTranslation(new Vector3f(65, 38, 0));
+		this.score = text("", ColorRGBA.Green, new Vector3f(62, 40, 0));
+		this.gold = text("", ColorRGBA.Yellow, new Vector3f(62, 38, 0));
 		this.rootNode.attachChild(this.score);
 		this.rootNode.attachChild(this.gold);
 	}

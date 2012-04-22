@@ -20,7 +20,7 @@ public class Constants {
 
 	public static float GUI_FONT_SIZE = 1.5f;
 
-	public static float GOLD_RATE = 5.0f;
+	public static float GOLD_RATE = 4.0f;
 	public static float ACTION_RATE = 1.0f;
 
 	public static float ENGAGEMENT_RATE = 0.2f;
@@ -29,7 +29,7 @@ public class Constants {
 	public static float REVENGE_LIMIT = 20;
 
 	public static float GOLD_RESERVE_RATE = ACTION_RATE * 5;
-	public static float GOLD_RESERVE_RESET_RATE = ACTION_RATE * 60;
+	public static float GOLD_RESERVE_RESET_RATE = ACTION_RATE * 30;
 
 	public static float BOMBER_PREFERENCE_RATE = 7;
 	public static float DESTROYER_PREFERENCE_RATE = 2;
