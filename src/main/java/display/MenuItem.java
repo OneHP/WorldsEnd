@@ -13,7 +13,7 @@ public abstract class MenuItem {
 		this.parent = null;
 		this.item = item;
 		this.subMenu = subMenu;
-		this.selectedIndex = subMenu.size() > 0 ? 0 : -1;
+		this.selectedIndex = subMenu.isEmpty() ? -1 : 0;
 		for (MenuItem menuItem : subMenu) {
 			menuItem.setParent(this);
 		}
@@ -33,8 +33,7 @@ public abstract class MenuItem {
 	}
 
 	public MenuItem getSelectedItem() {
-		return -1 == this.selectedIndex ? null : this.subMenu
-				.get(this.selectedIndex);
+		return -1 == this.selectedIndex ? null : this.subMenu.get(this.selectedIndex);
 	}
 
 	public String getItem() {

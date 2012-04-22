@@ -161,6 +161,42 @@ public class Main extends SimpleApplication {
 		initKeys();
 	}
 
+	private void endGame() {
+		this.gameStopped = true;
+		this.rootNode.detachAllChildren();
+
+		BitmapFont font = this.assetManager.loadFont("Interface/Fonts/Default.fnt");
+
+		BitmapText instructions = new BitmapText(font, false);
+		instructions.setSize(Constants.GUI_FONT_SIZE);
+		instructions.setColor(ColorRGBA.Green);
+		instructions.setLocalTranslation(new Vector3f(-30, 20, 0));
+
+		instructions.setText("Game Over\n\n"
+				+ (this.homePlanet.getDead() ? "You died, but managed to score "
+						: "You are the last planet standing! You scored ") + this.homePlanet.getScore()
+				+ " points\n\n\n" + "Press [Return] to Play Again\n");
+
+		this.rootNode.attachChild(instructions);
+
+		this.inputManager.clearMappings();
+		this.inputManager.removeListener(this.actionListener);
+		this.inputManager.addMapping("Restart", new KeyTrigger(KeyInput.KEY_RETURN));
+		this.inputManager.addListener(this.restartActionListener, new String[] { "Restart" });
+
+	}
+
+	private final ActionListener restartActionListener = new ActionListener() {
+		@Override
+		public void onAction(String name, boolean keyPressed, float tpf) {
+			if (name.equals("Restart") && !keyPressed) {
+				Main.this.inputManager.clearMappings();
+				Main.this.inputManager.removeListener(Main.this.restartActionListener);
+				startGame();
+			}
+		}
+	};
+
 	@Override
 	public void simpleUpdate(float tpf) {
 
@@ -168,6 +204,26 @@ public class Main extends SimpleApplication {
 			return;
 		}
 
+		if (this.planets.isEmpty() || this.homePlanet.getDead()) {
+			endGame();
+			return;
+		}
+
+		distributeGold(tpf);
+
+		this.displayLimiter += tpf;
+		if (this.displayLimiter > 0.1f) {
+			this.displayLimiter = 0.0f;
+			redrawDisplay();
+		}
+
+		engageBattle(tpf);
+		updateShips(tpf);
+		updatePlanets(tpf);
+		updateHomePlanet(tpf);
+	}
+
+	private void distributeGold(float tpf) {
 		this.goldTimer += tpf;
 		if (this.goldTimer > Constants.GOLD_RATE) {
 			this.goldTimer = 0.0f;
@@ -176,13 +232,9 @@ public class Main extends SimpleApplication {
 			}
 			this.homePlanet.goldTick();
 		}
+	}
 
-		this.displayLimiter += tpf;
-		if (this.displayLimiter > 0.1f) {
-			this.displayLimiter = 0.0f;
-			redrawDisplay();
-		}
-
+	private void engageBattle(float tpf) {
 		this.battleLimiter += tpf;
 		if (this.battleLimiter > Constants.ENGAGEMENT_RATE) {
 			this.battleLimiter = 0.0f;
@@ -237,10 +289,6 @@ public class Main extends SimpleApplication {
 
 			removeDeadShips(deadShips);
 		}
-
-		updateShips(tpf);
-		updatePlanets(tpf);
-		updateHomePlanet(tpf);
 	}
 
 	private List<Ship> getShipsWithinEngagementRange() {
@@ -413,7 +461,7 @@ public class Main extends SimpleApplication {
 		this.actionLimiter += tpf;
 		if (this.actionLimiter > Constants.ACTION_RATE) {
 			this.actionLimiter = 0.0f;
-			if (this.launchQueue.size() > 0) {
+			if (!this.launchQueue.isEmpty()) {
 				Ship ship = this.launchQueue.remove(0);
 				if (this.planets.contains(ship.getTarget())) {
 					if (ship.getCost() <= this.homePlanet.getGold()) {

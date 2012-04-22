@@ -148,11 +148,11 @@ public class Planet implements Drawable, Destructable, Updatable {
 			}
 		}
 
-		if (0 == planets.size()) {
+		if (planets.isEmpty()) {
 			planets = StaticAccess.getPlanets();
 			planets.remove(this);
 		}
-		if (0 == planets.size()) {
+		if (planets.isEmpty()) {
 			this.sendAttack = true;
 			this.attackTarget = StaticAccess.getHomePlanet();
 			this.shipType = clazz;
