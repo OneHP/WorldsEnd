@@ -20,9 +20,13 @@ public class Constants {
 	public static int DESTROYER_SHIP_COST = 30;
 	public static int DESTROYER_SHIP_HEALTH = 50;
 
+	public static float MISSILE_SHIP_SPEED = SHIP_SPEED_MULTIPLIER * 2.0f;
+	public static int MISSILE_SHIP_COST = 27;
+	public static int MISSILE_SHIP_HEALTH = 1;
+
 	public static float GUI_FONT_SIZE = 1.5f;
 
-	public static float GOLD_RATE = 2.0f;
+	public static float GOLD_RATE = 1.0f;
 	public static float ACTION_RATE = 1.0f;
 
 	public static float ENGAGEMENT_RATE = 0.2f;
@@ -34,5 +38,6 @@ public class Constants {
 	public static float GOLD_RESERVE_RESET_RATE = ACTION_RATE * 30;
 
 	public static float BOMBER_PREFERENCE_RATE = 7;
+	public static float MISSILE_PREFERENCE_RATE = 3;
 	public static float DESTROYER_PREFERENCE_RATE = 2;
 }

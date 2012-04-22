@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 
 import domain.BomberShip;
 import domain.DestroyerShip;
+import domain.MissileShip;
 import domain.Planet;
 import domain.Ship;
 import domain.SmallShip;
@@ -65,7 +66,17 @@ public class Menu {
 			}
 		};
 
-		MenuItem sendShip = new MenuItem("Send Ship", Lists.newArrayList(smallShip, bomberShip, destroyerShip)) {
+		MenuItem missileShip = new MenuItem("Missile", planetsMenuItems) {
+			@Override
+			public boolean action() {
+				Menu.this.root = getSelectedItem();
+				Menu.this.shipType = MissileShip.class;
+				return false;
+			}
+		};
+
+		MenuItem sendShip = new MenuItem("Send Ship", Lists.newArrayList(smallShip, bomberShip, destroyerShip,
+				missileShip)) {
 			@Override
 			public boolean action() {
 				Menu.this.root = getSelectedItem();

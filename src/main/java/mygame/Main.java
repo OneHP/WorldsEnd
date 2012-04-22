@@ -28,6 +28,7 @@ import display.MenuItem;
 import domain.BomberShip;
 import domain.DestroyerShip;
 import domain.Destructable;
+import domain.MissileShip;
 import domain.Planet;
 import domain.Ship;
 import domain.SmallShip;
@@ -63,6 +64,7 @@ public class Main extends SimpleApplication {
 	private AudioNode planetDeath;
 	private AudioNode planetHit;
 	private AudioNode smallDeath;
+	private AudioNode missile;
 	private AudioNode music;
 
 	public static void main(String[] args) {
@@ -88,6 +90,7 @@ public class Main extends SimpleApplication {
 		this.planetDeath = new AudioNode(this.assetManager, "Sounds/planet_death.wav");
 		this.planetHit = new AudioNode(this.assetManager, "Sounds/planet_hit.wav");
 		this.smallDeath = new AudioNode(this.assetManager, "Sounds/small_death.wav");
+		this.missile = new AudioNode(this.assetManager, "Sounds/missile.wav");
 		this.music = new AudioNode(this.assetManager, "Sounds/music_1.ogg");
 		this.music.setLooping(true);
 		this.music.setVolume(0.7f);
@@ -104,8 +107,8 @@ public class Main extends SimpleApplication {
 		BitmapText instructions = text(
 				"Worlds End\n\nWar rages around your tiny homeworld, but being small has its benefits.\n"
 						+ "The larger planets don't consider you much of a threat. Take advantage of this and hit them with all you've got.\n\n"
-						+ "Ship Costs:\n" + "Fighter:   7g\n" + "Bomber:    14g\n" + "Destroyer: 30g\n\n"
-						+ "Controls:\n" + "Bring up your ship launch menu with [Return]\n"
+						+ "Ship Costs:\n" + "Fighter:   7g\n" + "Bomber:    14g\n" + "Destroyer: 30g\n"
+						+ "Missile 27g\n\n" + "Controls:\n" + "Bring up your ship launch menu with [Return]\n"
 						+ "[Arrow] keys to navigate the menu\n" + "Confirm with [Return]\n"
 						+ "Go back with [Backspace]\n"
 						+ "You can launch multiple ships once you've confirmed the target, press [Right Arrow]\n\n\n"
@@ -254,8 +257,14 @@ public class Main extends SimpleApplication {
 						}
 					}));
 					for (Ship otherShip : otherShips) {
-						otherShip.takeDamage(ship.getLaserDamage(), ship.getOwner());
-						this.laser.play();
+						if (ship instanceof MissileShip && otherShip instanceof DestroyerShip) {
+							otherShip.takeDamage(1000, ship.getOwner());
+							ship.takeDamage(otherShip.getLaserDamage(), otherShip.getOwner());
+							this.missile.play();
+						} else {
+							otherShip.takeDamage(ship.getLaserDamage(), ship.getOwner());
+							this.laser.play();
+						}
 					}
 				}
 			}
@@ -268,6 +277,8 @@ public class Main extends SimpleApplication {
 					} else if (ship instanceof BomberShip) {
 						this.bomberDeath.play();
 					} else if (ship instanceof DestroyerShip) {
+						this.bomberDeath.play();
+					} else if (ship instanceof MissileShip) {
 						this.bomberDeath.play();
 					}
 				}
@@ -398,6 +409,9 @@ public class Main extends SimpleApplication {
 				} else if (clazz == DestroyerShip.class) {
 					ship = new DestroyerShip(Main.this.homePlanet, Main.this.menu.getTarget(),
 							Main.this.homePlanet.getLocation());
+				} else if (clazz == MissileShip.class) {
+					ship = new MissileShip(Main.this.homePlanet, Main.this.menu.getTarget(),
+							Main.this.homePlanet.getLocation());
 				}
 				Main.this.launchQueue.add(ship);
 			}
@@ -449,6 +463,8 @@ public class Main extends SimpleApplication {
 					ship = new BomberShip(planet, planet.getAttackTarget(), planet.getLocation());
 				} else if (clazz == DestroyerShip.class) {
 					ship = new DestroyerShip(planet, planet.getAttackTarget(), planet.getLocation());
+				} else if (clazz == MissileShip.class) {
+					ship = new MissileShip(planet, planet.getAttackTarget(), planet.getLocation());
 				}
 				this.ships.add(ship);
 				this.rootNode.attachChild(ship.getView());
@@ -487,11 +503,9 @@ public class Main extends SimpleApplication {
 				int currentHealth = ship.getCurrentHealth();
 				Planet owner = ship.getOwner();
 				Planet target = ship.getTarget();
-				if (!(ship instanceof DestroyerShip)) {
-					target.takeDamage(currentHealth, owner);
-					owner.scoreDamage(currentHealth, target);
-					this.planetHit.play();
-				}
+				target.takeDamage((int) (currentHealth * ship.getPlanetDamageMultiplier()), owner);
+				owner.scoreDamage((int) (currentHealth * ship.getPlanetDamageMultiplier()), target);
+				this.planetHit.play();
 				deadShips.add(ship);
 			}
 		}

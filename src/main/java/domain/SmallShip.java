@@ -50,4 +50,9 @@ public class SmallShip extends AbstractShip {
 	public int getLaserDamage() {
 		return 1;
 	}
+
+	@Override
+	public float getPlanetDamageMultiplier() {
+		return 1;
+	}
 }

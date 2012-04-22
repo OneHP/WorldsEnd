@@ -127,6 +127,9 @@ public class Planet implements Drawable, Destructable, Updatable {
 			if (this.random.nextInt((int) Constants.DESTROYER_PREFERENCE_RATE) == 1
 					&& this.gold >= Constants.DESTROYER_SHIP_COST) {
 				launchAttack(DestroyerShip.class);
+			} else if (this.random.nextInt((int) Constants.MISSILE_PREFERENCE_RATE) == 1
+					&& this.gold >= Constants.MISSILE_SHIP_COST) {
+				launchAttack(MissileShip.class);
 			} else if (this.random.nextInt((int) Constants.BOMBER_PREFERENCE_RATE) == 1
 					&& this.gold >= Constants.BOMBER_SHIP_COST) {
 				launchAttack(BomberShip.class);
@@ -189,6 +192,8 @@ public class Planet implements Drawable, Destructable, Updatable {
 			this.gold -= Constants.BOMBER_SHIP_COST;
 		} else if (shipType == DestroyerShip.class) {
 			this.gold -= Constants.DESTROYER_SHIP_COST;
+		} else if (shipType == MissileShip.class) {
+			this.gold -= Constants.MISSILE_SHIP_COST;
 		}
 		this.shipType = null;
 
@@ -199,12 +204,12 @@ public class Planet implements Drawable, Destructable, Updatable {
 		return this.currentHealth <= 0;
 	}
 
-	private static String[] firstPart = new String[] { "Alpha", "Beta", "Gamma", "Epsilon" };
-	private static String[] secondPart = new String[] { "Centauri", "Prime", "Arctaurus", "VII" };
+	private static String[] firstPart = new String[] { "Alpha", "Beta", "Gamma", "Epsilon", "Sigma" };
+	private static String[] secondPart = new String[] { "Centauri", "Prime", "Arctaurus", "VII", "IX" };
 
 	private static String randomName() {
 		Random random = new Random();
-		return firstPart[random.nextInt(4)] + " " + secondPart[random.nextInt(4)];
+		return firstPart[random.nextInt(4)] + " " + secondPart[random.nextInt(5)];
 	}
 
 	public String getName() {

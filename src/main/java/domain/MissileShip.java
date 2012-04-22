@@ -1,6 +1,6 @@
 package domain;
 
-import meshes.BomberShipMesh;
+import meshes.MissileShipMesh;
 import util.Constants;
 import util.StaticAccess;
 
@@ -9,15 +9,15 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 
-public class BomberShip extends AbstractShip {
+public class MissileShip extends AbstractShip {
 
-	public BomberShip(Planet owner, Planet target, Vector3f location) {
+	public MissileShip(Planet owner, Planet target, Vector3f location) {
 		super(owner, target, location);
-		Geometry geo = new Geometry("bomberShip", new BomberShipMesh());
+		Geometry geo = new Geometry("missileShip", new MissileShipMesh());
 		geo.setMaterial(getMaterial());
 		geo.setLocalTranslation(location);
 		super.initGeometry(geo);
-		super.initHealth(Constants.BOMBER_SHIP_HEALTH);
+		super.initHealth(Constants.MISSILE_SHIP_HEALTH);
 	}
 
 	private Material getMaterial() {
@@ -27,28 +27,8 @@ public class BomberShip extends AbstractShip {
 	}
 
 	@Override
-	public float getSize() {
-		return 1.0f;
-	}
-
-	@Override
-	public void update(float tpf) {
-		Vector3f targetHeading = this.getTarget().getLocation().subtract(this.getLocation()).normalize();
-		Vector3f movement = targetHeading.mult(tpf * Constants.BOMBER_SHIP_SPEED);
-		getView().move(movement);
-		if (this.getLocation().distance(this.getTarget().getLocation()) < this.getTarget().getSize()) {
-			setTargetHit(true);
-		}
-	}
-
-	@Override
 	public int getCost() {
-		return Constants.BOMBER_SHIP_COST;
-	}
-
-	@Override
-	public void takeDamage(int damage, Planet source) {
-		super.takeDamage(damage * Constants.BOMBER_DAMAGE_MULTIPLIER, source);
+		return Constants.MISSILE_SHIP_COST;
 	}
 
 	@Override
@@ -57,8 +37,23 @@ public class BomberShip extends AbstractShip {
 	}
 
 	@Override
-	public float getPlanetDamageMultiplier() {
+	public float getSize() {
 		return 1;
+	}
+
+	@Override
+	public void update(float tpf) {
+		Vector3f targetHeading = this.getTarget().getLocation().subtract(this.getLocation()).normalize();
+		Vector3f movement = targetHeading.mult(tpf * Constants.MISSILE_SHIP_SPEED);
+		getView().move(movement);
+		if (this.getLocation().distance(this.getTarget().getLocation()) < this.getTarget().getSize()) {
+			setTargetHit(true);
+		}
+	}
+
+	@Override
+	public float getPlanetDamageMultiplier() {
+		return 30;
 	}
 
 }

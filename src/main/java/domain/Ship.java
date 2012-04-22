@@ -12,4 +12,6 @@ public interface Ship extends Destructable, Updatable, Drawable {
 
 	int getLaserDamage();
 
+	float getPlanetDamageMultiplier();
+
 }

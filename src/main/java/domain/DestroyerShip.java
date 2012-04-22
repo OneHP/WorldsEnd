@@ -13,7 +13,7 @@ public class DestroyerShip extends AbstractShip {
 
 	public DestroyerShip(Planet owner, Planet target, Vector3f location) {
 		super(owner, target, location);
-		Geometry geo = new Geometry("destShip", new DestroyerShipMesh());
+		Geometry geo = new Geometry("destroyerShip", new DestroyerShipMesh());
 		geo.setMaterial(getMaterial());
 		geo.setLocalTranslation(location);
 		super.initGeometry(geo);
@@ -49,6 +49,11 @@ public class DestroyerShip extends AbstractShip {
 	@Override
 	public int getLaserDamage() {
 		return 2;
+	}
+
+	@Override
+	public float getPlanetDamageMultiplier() {
+		return 0.1f;
 	}
 
 }
