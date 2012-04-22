@@ -104,7 +104,7 @@ public class Main extends SimpleApplication {
 		BitmapText instructions = text(
 				"Worlds End\n\nWar rages around your tiny homeworld, but being small has its benefits.\n"
 						+ "The larger planets don't consider you much of a threat. Take advantage of this and hit them with all you've got.\n\n"
-						+ "Ship Costs:\n" + "Fighter:   7g\n" + "Bomber:    15g\n" + "Destroyer: 30g\n\n"
+						+ "Ship Costs:\n" + "Fighter:   7g\n" + "Bomber:    14g\n" + "Destroyer: 30g\n\n"
 						+ "Controls:\n" + "Bring up your ship launch menu with [Return]\n"
 						+ "[Arrow] keys to navigate the menu\n" + "Confirm with [Return]\n"
 						+ "Go back with [Backspace]\n"
