@@ -77,8 +77,11 @@ public class Main extends SimpleApplication {
 		this.bomberDeath = new AudioNode(this.assetManager, "Sounds/bomber_death.wav");
 		this.laser = new AudioNode(this.assetManager, "Sounds/laser.wav");
 		this.menuAction = new AudioNode(this.assetManager, "Sounds/menu_action.wav");
+		this.menuAction.setVolume(0.3f);
 		this.menuBack = new AudioNode(this.assetManager, "Sounds/menu_back.wav");
+		this.menuBack.setVolume(0.3f);
 		this.menuSelect = new AudioNode(this.assetManager, "Sounds/menu_select.wav");
+		this.menuSelect.setVolume(0.3f);
 		this.planetDeath = new AudioNode(this.assetManager, "Sounds/planet_death.wav");
 		this.planetHit = new AudioNode(this.assetManager, "Sounds/planet_hit.wav");
 		this.smallDeath = new AudioNode(this.assetManager, "Sounds/small_death.wav");
@@ -107,7 +110,7 @@ public class Main extends SimpleApplication {
 						+ "The larger planets don't consider you much of a threat. Take advantage of this and hit them with all you've got.\n\n"
 						+ "Ship Costs:\n" + "Fighter:   7g\n" + "Bomber:    15g\n" + "Destroyer: 30g\n\n"
 						+ "Controls:\n" + "Bring up your ship launch menu with [Return]\n"
-						+ "Arrow keys to navigate the menu\n" + "Confirm with [Return]\n"
+						+ "[Arrow] keys to navigate the menu\n" + "Confirm with [Return]\n"
 						+ "Go back with [Backspace]\n"
 						+ "You can launch multiple ships once you've confirmed the target, press [Right Arrow]\n\n\n"
 						+ "Press [Return] to Start the Game\n");
