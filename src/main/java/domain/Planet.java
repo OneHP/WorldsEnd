@@ -37,8 +37,8 @@ public class Planet implements Drawable, Destructable, Updatable {
 	private int goldReserve = 0;
 
 	public Planet(Vector3f location, float size) {
-		this.maxHealth = 100;
-		this.currentHealth = 100;
+		this.maxHealth = 200;
+		this.currentHealth = 200;
 		this.size = size;
 		this.location = location;
 		this.geometry = new Geometry("planet", new Circle(this.size, 32));
@@ -123,7 +123,7 @@ public class Planet implements Drawable, Destructable, Updatable {
 		if (this.actionLimiter > Constants.ACTION_RATE) {
 			this.actionLimiter = 0.0f;
 			if (this.random.nextInt((int) Constants.BOMBER_PREFERENCE_RATE) == 1
-					&& this.gold - this.goldReserve >= Constants.BOMBER_SHIP_COST) {
+					&& this.gold >= Constants.BOMBER_SHIP_COST) {
 				launchAttack(BomberShip.class);
 			} else if (this.gold - this.goldReserve >= Constants.SMALL_SHIP_COST) {
 				launchAttack(SmallShip.class);
@@ -140,7 +140,8 @@ public class Planet implements Drawable, Destructable, Updatable {
 	private void launchAttack(Class<? extends Ship> clazz) {
 		List<Planet> planets = Lists.newArrayList();
 		for (Entry<Planet, Integer> entry : this.revengeMeter.entrySet()) {
-			if (entry.getValue() > Constants.REVENGE_LIMIT) {
+			if (entry.getValue() > Constants.REVENGE_LIMIT
+					&& StaticAccess.getPlanets().contains(entry.getKey())) {
 				planets.add(entry.getKey());
 			}
 		}
@@ -173,11 +174,16 @@ public class Planet implements Drawable, Destructable, Updatable {
 		return this.shipType;
 	}
 
-	public void confirmAttack() {
+	public void confirmAttack(Class<? extends Ship> shipType) {
 		this.attackTarget = null;
 		this.sendAttack = false;
+		if (shipType == SmallShip.class) {
+			this.gold -= Constants.SMALL_SHIP_COST;
+		} else if (shipType == BomberShip.class) {
+			this.gold -= Constants.BOMBER_SHIP_COST;
+		}
 		this.shipType = null;
-		this.gold -= Constants.SMALL_SHIP_COST;
+
 	}
 
 	@Override

@@ -84,18 +84,7 @@ public class Main extends SimpleApplication {
 			this.rootNode.attachChild(planet.getView());
 		}
 
-		BitmapFont font = this.assetManager
-				.loadFont("Interface/Fonts/Default.fnt");
-		this.score = new BitmapText(font, false);
-		this.score.setSize(Constants.GUI_FONT_SIZE);
-		this.score.setColor(ColorRGBA.Green);
-		this.score.setLocalTranslation(new Vector3f(65, 40, 0));
-		this.gold = new BitmapText(font, false);
-		this.gold.setSize(Constants.GUI_FONT_SIZE);
-		this.gold.setColor(ColorRGBA.Yellow);
-		this.gold.setLocalTranslation(new Vector3f(65, 38, 0));
-		this.rootNode.attachChild(this.score);
-		this.rootNode.attachChild(this.gold);
+		setupScoreDisplay();
 
 		initKeys();
 	}
@@ -339,7 +328,7 @@ public class Main extends SimpleApplication {
 				}
 				this.ships.add(ship);
 				this.rootNode.attachChild(ship.getView());
-				planet.confirmAttack();
+				planet.confirmAttack(planet.getShipType());
 			}
 		}
 	}
@@ -354,7 +343,7 @@ public class Main extends SimpleApplication {
 				if (ship.getCost() <= this.homePlanet.getGold()) {
 					this.ships.add(ship);
 					Main.this.rootNode.attachChild(ship.getView());
-					Main.this.homePlanet.confirmAttack();
+					Main.this.homePlanet.confirmAttack(ship.getClass());
 				} else {
 					this.launchQueue.add(ship);
 				}
@@ -415,6 +404,21 @@ public class Main extends SimpleApplication {
 	@Override
 	public void simpleRender(RenderManager rm) {
 		// TODO: add render code
+	}
+
+	private void setupScoreDisplay() {
+		BitmapFont font = this.assetManager
+				.loadFont("Interface/Fonts/Default.fnt");
+		this.score = new BitmapText(font, false);
+		this.score.setSize(Constants.GUI_FONT_SIZE);
+		this.score.setColor(ColorRGBA.Green);
+		this.score.setLocalTranslation(new Vector3f(65, 40, 0));
+		this.gold = new BitmapText(font, false);
+		this.gold.setSize(Constants.GUI_FONT_SIZE);
+		this.gold.setColor(ColorRGBA.Yellow);
+		this.gold.setLocalTranslation(new Vector3f(65, 38, 0));
+		this.rootNode.attachChild(this.score);
+		this.rootNode.attachChild(this.gold);
 	}
 
 	private void setupWindow() {
