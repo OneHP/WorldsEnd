@@ -10,6 +10,7 @@ public class Constants {
 	public static float BOMBER_SHIP_SPEED = 1.0f;
 	public static int BOMBER_SHIP_COST = 14;
 	public static int BOMBER_SHIP_HEALTH = 20;
+	public static int BOMBER_DAMAGE_MULTIPLIER = 3;
 	public static float GUI_FONT_SIZE = 1.5f;
 	public static float GOLD_RATE = 5.0f;
 	public static float ACTION_RATE = 1.0f;
