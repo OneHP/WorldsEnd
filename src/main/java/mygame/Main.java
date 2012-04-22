@@ -72,6 +72,9 @@ public class Main extends SimpleApplication {
 
 	@Override
 	public void simpleInitApp() {
+
+		setDisplayFps(false);
+		setDisplayStatView(false);
 		StaticAccess.setAssetManager(this.assetManager);
 
 		this.bomberDeath = new AudioNode(this.assetManager, "Sounds/bomber_death.wav");
