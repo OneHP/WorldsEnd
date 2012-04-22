@@ -64,8 +64,7 @@ public class Planet implements Drawable, Destructable, Updatable {
 	}
 
 	private Material getMaterial() {
-		Material material = new Material(StaticAccess.getAssetManager(),
-				"Common/MatDefs/Misc/Unshaded.j3md");
+		Material material = new Material(StaticAccess.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 		material.setColor("Color", new ColorRGBA(0, 255, 255, 1));
 		return material;
 	}
@@ -89,8 +88,7 @@ public class Planet implements Drawable, Destructable, Updatable {
 	public void takeDamage(int damage, Planet source) {
 		this.currentHealth -= damage;
 		if (this.revengeMeter.containsKey(source)) {
-			this.revengeMeter.put(source, this.revengeMeter.get(source)
-					+ damage);
+			this.revengeMeter.put(source, this.revengeMeter.get(source) + damage);
 		} else {
 			this.revengeMeter.put(source, damage);
 		}
@@ -100,8 +98,7 @@ public class Planet implements Drawable, Destructable, Updatable {
 		this.gold += damage;
 		this.score += damage;
 		if (this.revengeMeter.containsKey(target)) {
-			this.revengeMeter.put(target, this.revengeMeter.get(target)
-					- damage);
+			this.revengeMeter.put(target, this.revengeMeter.get(target) - damage);
 		}
 	}
 
@@ -141,7 +138,8 @@ public class Planet implements Drawable, Destructable, Updatable {
 		List<Planet> planets = Lists.newArrayList();
 		for (Entry<Planet, Integer> entry : this.revengeMeter.entrySet()) {
 			if (entry.getValue() > Constants.REVENGE_LIMIT
-					&& StaticAccess.getPlanets().contains(entry.getKey())) {
+					&& (StaticAccess.getPlanets().contains(entry.getKey()) || entry.getKey() == StaticAccess
+							.getHomePlanet())) {
 				planets.add(entry.getKey());
 			}
 		}

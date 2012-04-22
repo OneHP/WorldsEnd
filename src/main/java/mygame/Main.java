@@ -350,12 +350,14 @@ public class Main extends SimpleApplication {
 			this.actionLimiter = 0.0f;
 			if (this.launchQueue.size() > 0) {
 				Ship ship = this.launchQueue.remove(0);
-				if (ship.getCost() <= this.homePlanet.getGold()) {
-					this.ships.add(ship);
-					Main.this.rootNode.attachChild(ship.getView());
-					Main.this.homePlanet.confirmAttack(ship.getClass());
-				} else {
-					this.launchQueue.add(ship);
+				if (this.planets.contains(ship.getTarget())) {
+					if (ship.getCost() <= this.homePlanet.getGold()) {
+						this.ships.add(ship);
+						Main.this.rootNode.attachChild(ship.getView());
+						Main.this.homePlanet.confirmAttack(ship.getClass());
+					} else {
+						this.launchQueue.add(ship);
+					}
 				}
 			}
 		}
