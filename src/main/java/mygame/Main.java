@@ -60,6 +60,7 @@ public class Main extends SimpleApplication {
 	private AudioNode planetDeath;
 	private AudioNode planetHit;
 	private AudioNode smallDeath;
+	private AudioNode music;
 
 	public static void main(String[] args) {
 		Main app = new Main();
@@ -78,6 +79,9 @@ public class Main extends SimpleApplication {
 		this.planetDeath = new AudioNode(this.assetManager, "Sounds/planet_death.wav");
 		this.planetHit = new AudioNode(this.assetManager, "Sounds/planet_hit.wav");
 		this.smallDeath = new AudioNode(this.assetManager, "Sounds/small_death.wav");
+		this.music = new AudioNode(this.assetManager, "Sounds/music_1.ogg");
+		this.music.setLooping(true);
+		this.music.setTimeOffset(2.0f);
 
 		setupWindow();
 
@@ -105,6 +109,8 @@ public class Main extends SimpleApplication {
 		setupScoreDisplay();
 
 		initKeys();
+
+		this.music.play();
 	}
 
 	@Override
