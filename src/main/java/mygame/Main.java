@@ -11,6 +11,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.jme3.app.SimpleApplication;
+import com.jme3.audio.AudioNode;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
@@ -51,6 +52,15 @@ public class Main extends SimpleApplication {
 	private Menu menu;
 	private List<BitmapText> menuText;
 
+	private AudioNode bomberDeath;
+	private AudioNode laser;
+	private AudioNode menuAction;
+	private AudioNode menuBack;
+	private AudioNode menuSelect;
+	private AudioNode planetDeath;
+	private AudioNode planetHit;
+	private AudioNode smallDeath;
+
 	public static void main(String[] args) {
 		Main app = new Main();
 		app.start();
@@ -59,6 +69,15 @@ public class Main extends SimpleApplication {
 	@Override
 	public void simpleInitApp() {
 		StaticAccess.setAssetManager(this.assetManager);
+
+		this.bomberDeath = new AudioNode(this.assetManager, "Sounds/bomber_death.wav");
+		this.laser = new AudioNode(this.assetManager, "Sounds/laser.wav");
+		this.menuAction = new AudioNode(this.assetManager, "Sounds/menu_action.wav");
+		this.menuBack = new AudioNode(this.assetManager, "Sounds/menu_back.wav");
+		this.menuSelect = new AudioNode(this.assetManager, "Sounds/menu_select.wav");
+		this.planetDeath = new AudioNode(this.assetManager, "Sounds/planet_death.wav");
+		this.planetHit = new AudioNode(this.assetManager, "Sounds/planet_hit.wav");
+		this.smallDeath = new AudioNode(this.assetManager, "Sounds/small_death.wav");
 
 		setupWindow();
 
@@ -69,8 +88,7 @@ public class Main extends SimpleApplication {
 		Planet enemyPlanet4 = new Planet(new Vector3f(-20, -20, 0), 5);
 		Planet enemyPlanet5 = new Planet(new Vector3f(-55, 20, 0), 8);
 
-		this.planets = Lists.newArrayList(enemyPlanet1, enemyPlanet2,
-				enemyPlanet3, enemyPlanet4, enemyPlanet5);
+		this.planets = Lists.newArrayList(enemyPlanet1, enemyPlanet2, enemyPlanet3, enemyPlanet4, enemyPlanet5);
 
 		StaticAccess.setHomePlanet(this.homePlanet);
 		StaticAccess.setPlanets(this.planets);
@@ -115,17 +133,16 @@ public class Main extends SimpleApplication {
 
 			for (final Ship ship : engagedShips) {
 				if (!(ship instanceof BomberShip)) {
-					List<Ship> otherShips = Lists.newArrayList(Iterables
-							.filter(engagedShips, new Predicate<Ship>() {
-								@Override
-								public boolean apply(Ship input) {
-									return (input.getOwner() != ship.getOwner())
-											&& input.getLocation().distance(
-													ship.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
-								}
-							}));
+					List<Ship> otherShips = Lists.newArrayList(Iterables.filter(engagedShips, new Predicate<Ship>() {
+						@Override
+						public boolean apply(Ship input) {
+							return (input.getOwner() != ship.getOwner())
+									&& input.getLocation().distance(ship.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
+						}
+					}));
 					for (Ship otherShip : otherShips) {
 						otherShip.takeDamage(1, ship.getOwner());
+						this.laser.play();
 					}
 				}
 			}
@@ -133,6 +150,11 @@ public class Main extends SimpleApplication {
 			for (Ship ship : this.ships) {
 				if (ship.getDead()) {
 					deadShips.add(ship);
+					if (ship instanceof SmallShip) {
+						this.smallDeath.play();
+					} else if (ship instanceof BomberShip) {
+						this.bomberDeath.play();
+					}
 				}
 			}
 
@@ -140,6 +162,7 @@ public class Main extends SimpleApplication {
 			for (Planet planet : this.planets) {
 				if (planet.getDead()) {
 					deadPlanets.add(planet);
+					this.planetDeath.play();
 				}
 			}
 			for (Planet planet : deadPlanets) {
@@ -161,34 +184,29 @@ public class Main extends SimpleApplication {
 	}
 
 	private List<Ship> getShipsWithinEngagementRange() {
-		List<Ship> engagedShips = Lists.newArrayList(Iterables.filter(
-				this.ships, new Predicate<Ship>() {
+		List<Ship> engagedShips = Lists.newArrayList(Iterables.filter(this.ships, new Predicate<Ship>() {
+			@Override
+			public boolean apply(final Ship outer) {
+				return Iterables.any(Main.this.ships, new Predicate<Ship>() {
 					@Override
-					public boolean apply(final Ship outer) {
-						return Iterables.any(Main.this.ships,
-								new Predicate<Ship>() {
-									@Override
-									public boolean apply(Ship inner) {
-										return inner.getLocation().distance(
-												outer.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
-									}
-								});
+					public boolean apply(Ship inner) {
+						return inner.getLocation().distance(outer.getLocation()) < Constants.ENGAGEMENT_DISTANCE;
 					}
-				}));
+				});
+			}
+		}));
 		return engagedShips;
 	}
 
 	private void initKeys() {
-		this.inputManager.addMapping("Action", new KeyTrigger(
-				KeyInput.KEY_RETURN));
+		this.inputManager.addMapping("Action", new KeyTrigger(KeyInput.KEY_RETURN));
 		this.inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_UP));
 		this.inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_DOWN));
 		this.inputManager.addMapping("Back", new KeyTrigger(KeyInput.KEY_BACK));
-		this.inputManager.addMapping("Right",
-				new KeyTrigger(KeyInput.KEY_RIGHT));
+		this.inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_RIGHT));
 		this.inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_LEFT));
-		this.inputManager.addListener(this.actionListener, new String[] {
-				"Action", "Up", "Down", "Back", "Right", "Left" });
+		this.inputManager.addListener(this.actionListener, new String[] { "Action", "Up", "Down", "Back", "Right",
+				"Left" });
 	}
 
 	private final ActionListener actionListener = new ActionListener() {
@@ -199,8 +217,7 @@ public class Main extends SimpleApplication {
 					removeMenu();
 					if (Main.this.menu.getRoot().action()) {
 						if (Main.this.menu.getLaunchAttack()) {
-							launchAttack(Main.this.menu.getShipType(),
-									Main.this.menu.getRepeatCount());
+							launchAttack(Main.this.menu.getShipType(), Main.this.menu.getRepeatCount());
 						}
 						Main.this.menuDisplayed = false;
 					} else {
@@ -209,6 +226,7 @@ public class Main extends SimpleApplication {
 				} else {
 					displayMenu();
 				}
+				Main.this.menuAction.play();
 			}
 			if (name.equals("Back") && !keyPressed) {
 				if (Main.this.menuDisplayed) {
@@ -219,6 +237,7 @@ public class Main extends SimpleApplication {
 						Main.this.menu.upALevel();
 						drawMenu();
 					}
+					Main.this.menuBack.play();
 				}
 			}
 			if (name.equals("Up") && !keyPressed) {
@@ -226,6 +245,7 @@ public class Main extends SimpleApplication {
 					Main.this.menu.navigateUp();
 					removeMenu();
 					drawMenu();
+					Main.this.menuSelect.play();
 				}
 			}
 			if (name.equals("Down") && !keyPressed) {
@@ -233,22 +253,23 @@ public class Main extends SimpleApplication {
 					Main.this.menu.navigateDown();
 					removeMenu();
 					drawMenu();
+					Main.this.menuSelect.play();
 				}
 			}
 			if (name.equals("Right") && !keyPressed) {
-				if (Main.this.menuDisplayed
-						&& -1 == Main.this.menu.getRoot().getSelectedIndex()) {
+				if (Main.this.menuDisplayed && -1 == Main.this.menu.getRoot().getSelectedIndex()) {
 					Main.this.menu.increaseRepeatCount();
 					removeMenu();
 					drawMenu();
+					Main.this.menuSelect.play();
 				}
 			}
 			if (name.equals("Left") && !keyPressed) {
-				if (Main.this.menuDisplayed
-						&& -1 == Main.this.menu.getRoot().getSelectedIndex()) {
+				if (Main.this.menuDisplayed && -1 == Main.this.menu.getRoot().getSelectedIndex()) {
 					Main.this.menu.decreaseRepeatCount();
 					removeMenu();
 					drawMenu();
+					Main.this.menuSelect.play();
 				}
 			}
 		}
@@ -257,12 +278,10 @@ public class Main extends SimpleApplication {
 			for (int i = 0; i < times; i++) {
 				Ship ship = null;
 				if (clazz == SmallShip.class) {
-					ship = new SmallShip(Main.this.homePlanet,
-							Main.this.menu.getTarget(),
+					ship = new SmallShip(Main.this.homePlanet, Main.this.menu.getTarget(),
 							Main.this.homePlanet.getLocation());
 				} else if (clazz == BomberShip.class) {
-					ship = new BomberShip(Main.this.homePlanet,
-							Main.this.menu.getTarget(),
+					ship = new BomberShip(Main.this.homePlanet, Main.this.menu.getTarget(),
 							Main.this.homePlanet.getLocation());
 				}
 				Main.this.launchQueue.add(ship);
@@ -280,12 +299,10 @@ public class Main extends SimpleApplication {
 		this.menuText = Lists.newArrayList();
 		MenuItem root = this.menu.getRoot();
 		List<MenuItem> subMenu = root.getSubMenu();
-		this.menuText.add(menuText(root, false, 0, 0,
-				-1 == root.getSelectedIndex()));
+		this.menuText.add(menuText(root, false, 0, 0, -1 == root.getSelectedIndex()));
 		for (int i = 0; i < subMenu.size(); i++) {
 			MenuItem menuItem = subMenu.get(i);
-			this.menuText.add(menuText(menuItem,
-					menuItem == root.getSelectedItem(), 1, 1 + i, false));
+			this.menuText.add(menuText(menuItem, menuItem == root.getSelectedItem(), 1, 1 + i, false));
 		}
 		for (BitmapText text : this.menuText) {
 			this.rootNode.attachChild(text);
@@ -298,18 +315,13 @@ public class Main extends SimpleApplication {
 		}
 	}
 
-	private BitmapText menuText(MenuItem menuItem, boolean selected, int depth,
-			int bredth, boolean leaf) {
-		BitmapFont font = this.assetManager
-				.loadFont("Interface/Fonts/Default.fnt");
+	private BitmapText menuText(MenuItem menuItem, boolean selected, int depth, int bredth, boolean leaf) {
+		BitmapFont font = this.assetManager.loadFont("Interface/Fonts/Default.fnt");
 		BitmapText text = new BitmapText(font, false);
-		text.setText(menuItem.getItem()
-				+ (leaf ? " x " + this.menu.getRepeatCount() : ""));
+		text.setText(menuItem.getItem() + (leaf ? " x " + this.menu.getRepeatCount() : ""));
 		text.setSize(Constants.GUI_FONT_SIZE);
-		text.setColor(new ColorRGBA(selected || leaf ? 0.0f : 1.0f, 1.0f,
-				selected || leaf ? 0.0f : 1.0f, 0.5f));
-		text.setLocalTranslation(new Vector3f(-72.5f + (depth * 2),
-				40 - (bredth * 2), 0));
+		text.setColor(new ColorRGBA(selected || leaf ? 0.0f : 1.0f, 1.0f, selected || leaf ? 0.0f : 1.0f, 0.5f));
+		text.setLocalTranslation(new Vector3f(-72.5f + (depth * 2), 40 - (bredth * 2), 0));
 		return text;
 	}
 
@@ -320,11 +332,9 @@ public class Main extends SimpleApplication {
 				Ship ship = null;
 				Class<? extends Ship> clazz = planet.getShipType();
 				if (clazz == SmallShip.class) {
-					ship = new SmallShip(planet, planet.getAttackTarget(),
-							planet.getLocation());
+					ship = new SmallShip(planet, planet.getAttackTarget(), planet.getLocation());
 				} else if (clazz == BomberShip.class) {
-					ship = new BomberShip(planet, planet.getAttackTarget(),
-							planet.getLocation());
+					ship = new BomberShip(planet, planet.getAttackTarget(), planet.getLocation());
 				}
 				this.ships.add(ship);
 				this.rootNode.attachChild(ship.getView());
@@ -364,6 +374,7 @@ public class Main extends SimpleApplication {
 				target.takeDamage(currentHealth, owner);
 				owner.scoreDamage(currentHealth, target);
 				deadShips.add(ship);
+				this.planetHit.play();
 			}
 		}
 
@@ -407,8 +418,7 @@ public class Main extends SimpleApplication {
 	}
 
 	private void setupScoreDisplay() {
-		BitmapFont font = this.assetManager
-				.loadFont("Interface/Fonts/Default.fnt");
+		BitmapFont font = this.assetManager.loadFont("Interface/Fonts/Default.fnt");
 		this.score = new BitmapText(font, false);
 		this.score.setSize(Constants.GUI_FONT_SIZE);
 		this.score.setColor(ColorRGBA.Green);
