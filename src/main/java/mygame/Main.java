@@ -81,6 +81,7 @@ public class Main extends SimpleApplication {
 		this.smallDeath = new AudioNode(this.assetManager, "Sounds/small_death.wav");
 		this.music = new AudioNode(this.assetManager, "Sounds/music_1.ogg");
 		this.music.setLooping(true);
+		this.music.setVolume(0.7f);
 		this.music.setTimeOffset(2.0f);
 
 		setupWindow();
